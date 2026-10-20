@@ -262,5 +262,4 @@ video.box { display: block; }
   .phead__tags  { flex: 0 0 160px; }
   .phead__link  { text-align: right; }
 
-  .footer__ig { display: none; } /* not present in the 390 frame */
 }
