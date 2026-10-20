@@ -45,14 +45,25 @@ document.querySelectorAll('.carousel').forEach((el) => {
   });
 });
 
-// Videos: autoplay + loop (already encoded at 1.5× speed). Play only while visible.
-const videos = document.querySelectorAll('video[autoplay]');
+// Videos: autoplay + loop (encoded at 2x speed). They are fully buffered up-front (preload="auto",
+// ~2 MB in total) and start playing *before* they scroll into view, so there is no start-up lag.
+const videos = [...document.querySelectorAll('video[autoplay]')];
 if ('IntersectionObserver' in window && videos.length) {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(({ target, isIntersecting }) => {
-      if (isIntersecting) target.play().catch(() => {});
-      else target.pause();
-    });
-  }, { rootMargin: '200px' });
-  videos.forEach((v) => io.observe(v));
+  const pageNear = new WeakMap(), railNear = new WeakMap();
+  const sync = (v) => {
+    if (pageNear.get(v) && railNear.get(v)) { if (v.paused) v.play().catch(() => {}); }
+    else if (!v.paused) v.pause();
+  };
+  // 1) vertical: is the carousel within ~1 screen of the viewport?
+  const ioPage = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+    target.querySelectorAll('video[autoplay]').forEach((v) => { pageNear.set(v, isIntersecting); sync(v); });
+  }), { rootMargin: '100% 0px' });
+  // 2) horizontal: is the slide within ~1 screen of the visible part of its carousel?
+  document.querySelectorAll('.carousel').forEach((rail) => {
+    ioPage.observe(rail);
+    const ioRail = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+      railNear.set(target, isIntersecting); sync(target);
+    }), { root: rail, rootMargin: '0px 100% 0px 100%' });
+    rail.querySelectorAll('video[autoplay]').forEach((v) => ioRail.observe(v));
+  });
 }

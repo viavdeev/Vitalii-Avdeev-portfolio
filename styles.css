@@ -265,7 +265,6 @@ video.box { display: block; }
   .phead__row--2 { gap: 16px; }
   .phead__tags  { flex: 0 0 160px; }
   .phead__link  { text-align: right; }
-  .footer__ig { display: none; } /* not present in the 390 frame */
   .phead__link a::after { inset: -14px -12px -14px -32px; }
 
 }
