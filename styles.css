@@ -1,0 +1,266 @@
+/* ─────────────────────────────────────────────────────────────
+   Vitalii Avdeev — portfolio
+   Breakpoints follow the Figma frames:
+     mobile   < 744      (frame 390)
+     tablet   744–1279   (frames 744 / 834 / 1024)
+     desktop  ≥ 1280     (frames 1280 / 1600)
+   ───────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "ALS Hauss";
+  src: url("/assets/fonts/als-hauss-var.woff2") format("woff2-variations"),
+       url("/assets/fonts/als-hauss-var.woff2") format("woff2");
+  font-weight: 400 550;
+  font-style: normal;
+  font-display: swap;
+}
+/* Metric-compatible Times New Roman fallback — only downloaded on devices
+   without Times New Roman (Android, Linux). */
+@font-face {
+  font-family: "Tinos";
+  src: url("/assets/fonts/tinos-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ink: #242429;
+  --bg: #ffffff;
+  --serif: "Times New Roman", Times, "Tinos", serif;
+  --sans: "ALS Hauss", "Helvetica Neue", Arial, sans-serif;
+
+  /* layout tokens (desktop / tablet defaults) */
+  --pad-x: 16px;
+  --pad-top: 12px;
+  --pad-bottom: 0px;
+  --intro-gap: 160px;   /* intro → home */
+  --home-top: 140px;    /* home padding-top */
+  --section-gap: 160px; /* between projects / footer */
+  --project-gap: 24px;  /* project header → carousel */
+  --k: 1;               /* slide scale: 504px tall slides */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+p, h1, h2 { margin: 0; font: inherit; }
+a { color: inherit; text-decoration: none; }
+a:focus-visible, .carousel:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
+img { display: block; }
+
+/* ───────── Page ───────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--intro-gap);
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  overflow-x: clip;
+}
+
+/* ───────── Intro (serif 37 / 46.5) ───────── */
+.intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 140px;
+  font-family: var(--serif);
+  font-size: 37px;
+  line-height: 46.5px;
+  letter-spacing: -0.37px;
+  font-weight: 400;
+  word-break: break-word;
+}
+.intro__text { flex: 1 1 auto; max-width: 1158px; min-width: 0; }
+/* 10 spaces in the Figma text = 10 × (0.25em − 0.01em tracking) = 2.4em */
+.intro__text p { text-indent: 2.4em; }
+.intro__links { flex: 0 0 212px; display: flex; flex-direction: column; }
+.intro__links a { display: block; }
+
+/* ───────── Home ───────── */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  padding-top: var(--home-top);
+}
+.project { display: flex; flex-direction: column; gap: var(--project-gap); }
+
+/* ───────── Project header — desktop (13 / 19, one row) ───────── */
+.phead {
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 19px;
+  font-weight: 400;
+  word-break: break-word;
+}
+.phead__row { display: contents; }
+.phead__title { flex: 0 0 220px; font-weight: 550; }
+.phead__desc  { flex: 0 0 320px; }
+.phead__tags  { flex: 1 0 0; min-width: 120px; }
+.phead__years { flex: 1 0 0; min-width: 80px; }
+.phead__link  { flex: 1 0 0; min-width: 1px; }
+.dash-m { display: none; }
+
+/* ───────── Carousel ───────── */
+.carousel {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* bleed to the right edge of the viewport, like the Figma frame */
+  margin-right: calc(-1 * var(--pad-x));
+  padding-right: var(--pad-x);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+}
+.carousel::-webkit-scrollbar { display: none; }
+.carousel.is-dragging { cursor: grabbing; }
+.carousel.is-dragging * { pointer-events: none; }
+
+.slide {
+  position: relative;
+  flex: 0 0 auto;
+  width: calc(var(--w) * 1px * var(--k));
+  height: calc(504px * var(--k));
+  border-radius: calc(1.2px * var(--k));
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.slide.light { background: #fafafa; }
+.slide.dark  { background: #202022; }
+
+/* Each slide is authored at its 504px-tall desktop size and scaled as a unit
+   (mobile 210px = 504 × 0.41667, exactly as in Figma). */
+.stage {
+  position: absolute;
+  left: 0; top: 0;
+  width: calc(var(--w) * 1px);
+  height: 504px;
+  transform: scale(var(--k));
+  transform-origin: 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stage--end { flex-direction: column; justify-content: flex-end; }
+.stage img, .stage video { -webkit-user-drag: none; user-select: none; }
+.box  { position: relative; flex: none; }
+.abs  { position: absolute; }
+.crop { overflow: hidden; }
+.crop > img, .crop > video { position: absolute; max-width: none; }
+.row-start { display: flex; align-items: flex-start; justify-content: center; }
+.row-start > *, .stage > img { flex: none; }
+video.box { display: block; }
+
+/* Pro Display XDR frame (GI slide 06) */
+.display__screen > i { position: absolute; display: block; }
+.display__screen .f3 { inset: 0; background: #434343; border-radius: 3.421px; }
+.display__screen .f2 { inset: 0.15px 0.16px 0.16px 0.15px; background: #000; border: 0.125px solid #313131; border-radius: 3.278px; }
+.display__screen .f1 { inset: 5.93px 5.93px 5.94px 5.93px; background: #242424; border: 0.125px solid #1b1b1b; border-radius: 0.25px; }
+
+/* ───────── Footer ───────── */
+.footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+.footer__links {
+  flex: 1 0 0;
+  min-width: 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--serif);
+  font-size: 37px;
+  line-height: 46.5px;
+  letter-spacing: -0.37px;
+  white-space: nowrap;
+}
+.footer__copy {
+  flex: 1 0 0;
+  min-width: 1px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 19px;
+  white-space: nowrap;
+}
+
+/* ───────── Hover (desktop pointers only) ───────── */
+@media (hover: hover) {
+  .intro a, .phead a, .footer a { transition: opacity .2s ease; }
+  .intro a:hover, .phead a:hover, .footer a:hover { opacity: .5; }
+}
+
+/* ═════════ Tablet 744–1279 (iPad mini / small / big) ═════════ */
+@media (max-width: 1279.98px) {
+  .intro {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 40px;
+  }
+  .intro__text { width: 100%; max-width: none; flex: none; }
+  .intro__links { flex: none; }
+  .intro__links a { padding-left: 2.4em; } /* each link is indented 10 spaces */
+
+  .phead {
+    flex-direction: column;
+    gap: 12px;
+    font-size: 16px;
+    line-height: 22.5px;
+  }
+  .phead__row { display: flex; gap: 6px; align-items: flex-start; width: 100%; }
+  .phead__title { flex: 0 0 314px; letter-spacing: -0.1px; }
+  .phead__desc  { flex: 1 0 0; min-width: 1px; max-width: 490px; }
+  .phead__tags  { flex: 0 0 314px; min-width: 0; }
+  .phead__years { flex: 1 0 0; min-width: 1px; }
+  .phead__link  { flex: 1 0 0; min-width: 1px; }
+  .dash-d { display: none; }
+  .dash-m { display: inline; }
+}
+
+/* ═════════ Mobile < 744 (frame 390) ═════════ */
+@media (max-width: 743.98px) {
+  :root {
+    --pad-x: 12px;
+    --pad-top: 60px;
+    --pad-bottom: 24px;
+    --intro-gap: 10px;
+    --section-gap: 80px;
+    --project-gap: 16px;
+    --k: 0.416666667; /* 210 / 504 */
+  }
+  .intro__text {
+    font-size: 27px;
+    line-height: 33px;
+    letter-spacing: -0.27px;
+  }
+
+  .phead__row--1 { flex-direction: column; gap: 6px; }
+  .phead__title { flex: none; width: 314px; max-width: 100%; }
+  .phead__desc  { flex: none; width: 100%; max-width: none; }
+  .phead__row--2 { gap: 16px; }
+  .phead__tags  { flex: 0 0 160px; }
+  .phead__link  { text-align: right; }
+
+  .footer__ig { display: none; } /* not present in the 390 frame */
+}
