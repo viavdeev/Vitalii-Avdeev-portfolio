@@ -17,7 +17,7 @@ ARTICLE = r"(?:a|an|the)"            # articles ALWAYS stick to the following wo
 SHORT = r"(?:of|to|in|on|at|by|as|or|and|for|is|AI|it|its)"
 PHRASES = [
     "Vitalii Avdeev", "Mexico City (GMT-6)", "Download CV", "Core team", "Web app",
-    "500K monthly", "Cross-platform,", "2026 Vitalii Avdeev",
+    "500K monthly", "2M daily", "Media Art", "Cross-platform,", "2026 Vitalii Avdeev",
 ]
 
 def fix(text):
