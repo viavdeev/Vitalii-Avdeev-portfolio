@@ -9,3 +9,8 @@ Static portfolio site — plain HTML/CSS/JS, no build step. Deployed on Vercel (
 - `scripts/process-videos.sh` — speeds videos 1.5×, strips audio, encodes for web
 
 Local preview: `python3 -m http.server 8080` → http://localhost:8080
+
+## Copy edits
+
+Visible text uses non-breaking spaces (short words, names, last two words of a line). After changing any copy in
+`index.html`, run `python3 scripts/nbsp.py` to re-apply them (safe to run repeatedly).

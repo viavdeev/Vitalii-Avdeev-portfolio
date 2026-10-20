@@ -112,6 +112,10 @@ img { display: block; }
 .phead__link  { flex: 1 0 0; min-width: 1px; }
 .dash-m { display: none; }
 
+/* "Link" / "Wiki": ghost buttons — invisible, generous click area (no layout shift) */
+.phead__link a { position: relative; display: inline-block; }
+.phead__link a::after { content: ""; position: absolute; inset: -14px -40px -14px -24px; }
+
 /* ───────── Carousel ───────── */
 .carousel {
   display: flex;
@@ -261,5 +265,7 @@ video.box { display: block; }
   .phead__row--2 { gap: 16px; }
   .phead__tags  { flex: 0 0 160px; }
   .phead__link  { text-align: right; }
+  .footer__ig { display: none; } /* not present in the 390 frame */
+  .phead__link a::after { inset: -14px -12px -14px -32px; }
 
 }
