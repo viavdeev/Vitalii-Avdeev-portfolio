@@ -2,7 +2,7 @@
 """Typographic non-breaking spaces for index.html (idempotent).
 Run after editing any visible copy:  python3 scripts/nbsp.py
 Rules (body text only):
-  1. articles (a, an, the) always stick to the next word; other short words (of, to, in, on, at, by, as, or, and, for, is, AI) stick to the next word (pairs, never chains)
+  1. articles (a, an, the) always stick to the next word; other short words (of, bound to the next word unless that is an article — no 3-word chains; to, in, on, at, by, as, or, and, for, is, AI) stick to the next word (pairs, never chains)
   2. names / fixed phrases never split: Vitalii Avdeev, Mexico City (GMT-6), Download CV, Core team, Web app ...
   3. "&" sticks to both neighbours
   4. the last two words of every text run stick together (no one-word last line)
@@ -36,7 +36,7 @@ def fix(text):
             bind(i)                       # "&" sticks to both neighbours
         elif re.fullmatch(ARTICLE, w, flags=re.I):
             bind(i)                       # a / an / the + next word, always
-        elif re.fullmatch(SHORT, w, flags=re.I) and not tail[i]:
+        elif re.fullmatch(SHORT, w, flags=re.I) and not tail[i] and not re.fullmatch(ARTICLE, re.sub(r"\W", "", tok[i + 1]), flags=re.I):
             bind(i)                       # short word sticks to the next one (pairs only, no chains)
     if n > 2:
         join[n - 2] = True                # never leave a single word alone on the last line

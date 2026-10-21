@@ -112,9 +112,10 @@ img { display: block; }
 .phead__link  { flex: 1 0 0; min-width: 1px; }
 .dash-m { display: none; }
 
-/* "Link" / "Wiki": ghost buttons — invisible, generous click area (no layout shift) */
+/* "Link" / "Wiki": ghost buttons — invisible tap area, exactly 44 x 44 px (Apple HIG / WCAG 2.5.5 recommended
+   minimum touch target), centred on the word; no layout shift */
 .phead__link a { position: relative; display: inline-block; }
-.phead__link a::after { content: ""; position: absolute; inset: -14px -40px -14px -24px; }
+.phead__link a::after { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
 
 /* ───────── Carousel ───────── */
 .carousel {
@@ -265,6 +266,5 @@ video.box { display: block; }
   .phead__row--2 { gap: 16px; }
   .phead__tags  { flex: 0 0 160px; }
   .phead__link  { text-align: right; }
-  .phead__link a::after { inset: -14px -12px -14px -32px; }
 
 }
