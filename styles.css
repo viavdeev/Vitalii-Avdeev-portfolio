@@ -169,7 +169,9 @@ img { display: block; }
 .crop > img, .crop > video { position: absolute; max-width: none; }
 .row-start { display: flex; align-items: flex-start; justify-content: center; }
 .row-start > *, .stage > img { flex: none; }
-video.box { display: block; }
+video.box { display: block; transition: opacity .35s ease; }
+video.box.is-gap { opacity: 0; }  /* loop gap: fade to the empty slide (timings in main.js → LOOP) */
+@media (prefers-reduced-motion: reduce) { video.box { transition: none; } }
 
 /* Pro Display XDR frame (GI slide 06) */
 .display__screen > i { position: absolute; display: block; }
