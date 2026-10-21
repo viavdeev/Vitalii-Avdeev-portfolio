@@ -67,3 +67,18 @@ if ('IntersectionObserver' in window && videos.length) {
     rail.querySelectorAll('video[autoplay]').forEach((v) => ioRail.observe(v));
   });
 }
+
+// Images: every slide image is fetched right after first paint (small WebP, ~1.5 MB in total, low priority so the
+// first screen is never delayed) — no lazy-loading, so nothing is "requested late" while you scroll.
+// Then the browser is asked to DECODE the slides ahead of the viewport (about 1.5 screens either side), so the
+// next picture is already a ready bitmap when it slides in.
+if ('IntersectionObserver' in window) {
+  document.querySelectorAll('.carousel').forEach((rail) => {
+    const ahead = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+      if (!isIntersecting || target.dataset.decoded) return;
+      target.dataset.decoded = '1';
+      if (target.decode) target.decode().catch(() => {});
+    }), { root: rail, rootMargin: '0px 150% 0px 150%' });
+    rail.querySelectorAll('img').forEach((img) => ahead.observe(img));
+  });
+}
