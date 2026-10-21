@@ -45,38 +45,26 @@ document.querySelectorAll('.carousel').forEach((el) => {
   });
 });
 
-// Videos: autoplay, loop at 1.2x (encoded). Preloaded, started just before they scroll into view, paused when far away.
-// The loop is driven here instead of the native `loop` attribute, which jump-cuts from the last frame straight to the
-// first (and flashes/stutters in some browsers). Each cycle:  play -> hold the final frame -> fade to the empty slide
-// -> rewind while hidden -> short empty beat -> fade in on the first frame -> play.
-// Timings (ms) — tweak here:
-const LOOP = { hold: 700, fade: 350, gap: 300 };   // CSS: video.box transition .35s must match `fade`
-
+// Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
+// Gapless loop: the native `loop` attribute only restarts AFTER the last frame has been shown and the decoder has run
+// dry (visible hiccup, black flash in some browsers). Instead, the moment the LAST frame is presented we seek back to 0
+// while still playing, so the next frame shown is already the first one. Native `loop` stays on as a fallback.
 const videos = [...document.querySelectorAll('video[autoplay]')];
 if ('IntersectionObserver' in window && videos.length) {
   const pageNear = new WeakMap(), railNear = new WeakMap();
   const near = (v) => pageNear.get(v) && railNear.get(v);
   const sync = (v) => {
-    if (near(v)) { if (v.paused && !v.ended && !v._resting) v.play().catch(() => {}); }
+    if (near(v)) { if (v.paused) v.play().catch(() => {}); }
     else if (!v.paused) v.pause();
   };
 
   videos.forEach((v) => {
-    v.loop = false;                                   // custom loop (without JS the native `loop` attribute still works)
-    v.addEventListener('ended', () => {
-      v._resting = true;
-      v._t = setTimeout(() => {
-        v.classList.add('is-gap');                    // fade out to the empty slide
-        v._t = setTimeout(() => {
-          v.currentTime = 0;                          // rewind while invisible
-          v._t = setTimeout(() => {
-            v._resting = false;
-            v.classList.remove('is-gap');             // fade in on the first frame
-            if (near(v)) v.play().catch(() => {});    // (if scrolled away meanwhile, sync() starts it later)
-          }, LOOP.gap);
-        }, LOOP.fade);
-      }, LOOP.hold);
-    });
+    if (!('requestVideoFrameCallback' in v)) return;       // older browsers: native loop
+    const onFrame = (_, meta) => {
+      if (!v.paused && v.duration && v.duration - meta.mediaTime < 0.05) v.currentTime = 0;  // last frame is on screen -> restart now
+      v.requestVideoFrameCallback(onFrame);
+    };
+    v.requestVideoFrameCallback(onFrame);
   });
 
   // 1) vertical: is the carousel within ~1 screen of the viewport?
