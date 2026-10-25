@@ -62,6 +62,16 @@ const attach = (v) => {
   if (!v.dataset.webm || v.dataset.attached) return;
   v.dataset.attached = '1';
   v.src = STACKED ? v.dataset.sa : (WEBKIT && v.dataset.hevc ? v.dataset.hevc : v.dataset.webm);
+  if (!STACKED && WEBKIT && v.dataset.hevc) {
+    // If this Safari can't decode the HEVC-alpha file, fall back to the stacked-alpha canvas instead of a broken frame.
+    v.addEventListener('error', () => {
+      if (v.dataset.fallback) return;
+      v.dataset.fallback = '1';
+      stackedCanvas(v);
+      v.src = v.dataset.sa;
+      v.play().catch(() => {});
+    });
+  }
 };
 
 function stackedCanvas(v) {
@@ -133,6 +143,11 @@ if ('IntersectionObserver' in window && videos.length) {
       }
     } else if (!v.paused) v.pause();
   };
+  // When the browser refuses autoplay (e.g. Safari in Low Power Mode shows a play button), start the visible videos on the
+  // first real interaction anywhere on the page (click, tap, key, carousel drag).
+  const unlock = () => videos.forEach((v) => { if (near(v) && v.paused) { attach(v); v.play().catch(() => {}); } });
+  ['pointerdown', 'touchend', 'keydown'].forEach((e) => window.addEventListener(e, unlock, { passive: true }));
+
   videos.filter((v) => v.dataset.follow).forEach((f) => {
     const L = document.getElementById(f.dataset.follow);
     if (!L) return;

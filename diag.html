@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Video check</title>
+<style>body{font:14px/1.4 -apple-system,Helvetica,sans-serif;margin:16px;background:#ff00ff22}pre{white-space:pre-wrap;background:#fff;padding:8px}.row{display:flex;gap:12px;flex-wrap:wrap}.row div{background:#fff;padding:6px}video{width:150px;height:282px;display:block;background:transparent}</style></head><body>
+<h3>Video check — please screenshot this whole page</h3>
+<div class="row">
+<div>A: other project (mp4)<video id="a" src="/assets/video/gi-06.mp4?v=2b9a06ab" autoplay loop muted playsinline preload="auto"></video></div>
+<div>B: WB HEVC alpha<video id="b" src="/assets/video/wb-03-hevc.mov?v=114462b7" autoplay loop muted playsinline preload="auto"></video></div>
+<div>C: WB WebM alpha<video id="c" src="/assets/video/wb-03.webm?v=976183c9" autoplay loop muted playsinline preload="auto"></video></div>
+<div>D: WB stacked mp4<video id="d" src="/assets/video/wb-03-sa.mp4?v=e1f5882f" autoplay loop muted playsinline preload="auto"></video></div>
+</div>
+<pre id="o">running…</pre>
+<script>
+const o=document.getElementById('o'),L=[];const log=s=>{L.push(s);o.textContent=L.join('\n')};
+const v=document.createElement('video');
+log('UA: '+navigator.userAgent);
+for(const t of ['video/mp4; codecs="hvc1"','video/quicktime; codecs="hvc1"','video/mp4; codecs="avc1.640028"','video/webm; codecs="vp9"']) log('canPlayType '+t+' = "'+v.canPlayType(t)+'"');
+log('WebGL: '+!!document.createElement('canvas').getContext('webgl'));
+for(const id of 'abcd'){const e=document.getElementById(id);
+ e.addEventListener('error',()=>log(id+' ERROR code '+(e.error&&e.error.code)+' '+(e.error&&e.error.message)));
+ e.play().then(()=>log(id+' play() ok')).catch(err=>log(id+' play() rejected: '+err.name+' '+err.message));}
+setTimeout(()=>{for(const id of 'abcd'){const e=document.getElementById(id);log(id+' after 4s: readyState '+e.readyState+' paused '+e.paused+' t='+e.currentTime.toFixed(2)+' size '+e.videoWidth+'x'+e.videoHeight)}},4000);
+</script></body></html>
