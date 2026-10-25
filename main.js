@@ -196,3 +196,29 @@ if ('IntersectionObserver' in window) {
     rail.querySelectorAll('img').forEach((img) => ahead.observe(img));
   });
 }
+
+// ?debug — on-page report of the WB videos' state (for diagnosing Safari).
+if (/[?&]debug\b/.test(location.search)) {
+  const log = [];
+  const orig = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function () {
+    const p = orig.call(this);
+    if (p && p.catch) p.catch((e) => log.push((this.id || this.currentSrc.split('/').pop().split('?')[0]) + ' play() ' + e.name));
+    return p;
+  };
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:9;max-width:96vw;max-height:60vh;overflow:auto;margin:0;padding:8px;background:#fff;color:#000;font:11px/1.35 ui-monospace,monospace;border:1px solid #000;white-space:pre-wrap';
+  document.body.appendChild(pre);
+  document.querySelectorAll('video[data-webm]').forEach((v) => {
+    ['error', 'stalled', 'waiting', 'playing', 'pause', 'ended'].forEach((e) => v.addEventListener(e, () => log.push(v.dataset.webm.split('/').pop().split('?')[0] + ' ' + e + (e === 'error' && v.error ? ' code ' + v.error.code : ''))));
+  });
+  setInterval(() => {
+    const rows = [...document.querySelectorAll('video[data-webm]')].map((v) => {
+      const c = v.nextElementSibling && v.nextElementSibling.tagName === 'CANVAS';
+      return (v.dataset.webm.split('/').pop().split('?')[0]).padEnd(11) + ' src=' + (v.currentSrc.split('/').pop().split('?')[0] || '-') +
+        ' rs=' + v.readyState + ' paused=' + v.paused + ' t=' + v.currentTime.toFixed(2) + ' err=' + (v.error ? v.error.code : '-') +
+        ' canvas=' + c + ' op=' + (v.style.opacity || '1');
+    });
+    pre.textContent = 'WEBKIT=' + WEBKIT + ' HEVC=' + HEVC + ' STACKED=' + STACKED + '\n' + rows.join('\n') + '\n— events —\n' + log.slice(-14).join('\n');
+  }, 500);
+}
