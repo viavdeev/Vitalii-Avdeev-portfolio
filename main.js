@@ -53,15 +53,35 @@ const videos = [...document.querySelectorAll('video[autoplay]')];
 if ('IntersectionObserver' in window && videos.length) {
   const pageNear = new WeakMap(), railNear = new WeakMap();
   const near = (v) => pageNear.get(v) && railNear.get(v);
-  const sync = (v) => {
-    if (near(v)) { if (v.paused) v.play().catch(() => {}); }
-    else if (!v.paused) v.pause();
+  // Paired loops (data-follow="<leader id>" data-lag="<sec>"): the follower plays the same loop `lag` seconds behind its leader.
+  // Re-checked on every leader timeupdate, so it also self-heals after pauses, seeks and metadata arriving late.
+  const lock = (f, force) => {
+    const L = document.getElementById(f.dataset.follow), lag = +f.dataset.lag || 0;
+    if (!L || !L.duration || !f.duration) return;
+    const d = f.duration, want = (((L.currentTime - lag) % d) + d) % d;
+    const off = Math.abs(f.currentTime - want), drift = Math.min(off, d - off);
+    if (force || drift > 0.06) { f.currentTime = want; f._hold = performance.now() + 400; }   // _hold: don't let the follower's own loop-restart undo the seek
   };
+  const sync = (v) => {
+    if (near(v)) {
+      if (v.paused) {
+        if (v.dataset.follow) lock(v, true);
+        v.play().catch(() => {});
+      }
+    } else if (!v.paused) v.pause();
+  };
+  videos.filter((v) => v.dataset.follow).forEach((f) => {
+    const L = document.getElementById(f.dataset.follow);
+    if (!L) return;
+    L.addEventListener('timeupdate', () => { if (!L.paused && !f.paused) lock(f, false); });
+    f.addEventListener('loadedmetadata', () => { if (near(f)) lock(f, true); });
+    L.addEventListener('loadedmetadata', () => { if (near(f)) lock(f, true); });
+  });
 
   videos.forEach((v) => {
     if (!('requestVideoFrameCallback' in v)) return;       // older browsers: native loop
     const onFrame = (_, meta) => {
-      if (!v.paused && v.duration && v.duration - meta.mediaTime < 0.05) v.currentTime = 0;  // last frame is on screen -> restart now
+      if (!v.paused && v.duration && v.duration - meta.mediaTime < 0.05 && !(v._hold > performance.now())) v.currentTime = 0;  // last frame is on screen -> restart now
       v.requestVideoFrameCallback(onFrame);
     };
     v.requestVideoFrameCallback(onFrame);
