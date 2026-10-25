@@ -46,22 +46,22 @@ document.querySelectorAll('.carousel').forEach((el) => {
 });
 
 // Transparent videos (WB Club phones). They are fetched only when they get near the viewport (see sync() below).
-//  - Chrome / Firefox / Edge: VP9-with-alpha WebM, played natively (data-webm).
-//  - WebKit (Safari, and every browser on iOS) ignores the alpha channel of WebM, and H.264 has none. There the phone is
-//    delivered as a "stacked alpha" H.264 file (data-sa): colour (premultiplied) on the left half, alpha as grey on the right
-//    half. A tiny WebGL pass recombines the halves on a <canvas> laid over the (invisible) <video>, so the phone is
-//    truly transparent and no rectangle is ever visible. Append ?stack to the URL to force this path for testing.
-const STACKED = (() => {
+//  - Chrome / Firefox / Edge: VP9-with-alpha WebM (data-webm), played natively.
+//  - Safari / every iOS browser (WebKit): HEVC-with-alpha .mov made with Apple's encoder (data-hevc), played natively.
+//  - WebKit without HEVC decoding (very old devices): "stacked alpha" H.264 (data-sa, colour | alpha halves)
+//    recombined on a <canvas> by a tiny WebGL pass. Append ?stack to the URL to force this path for testing.
+const WEBKIT = (() => {
   const ua = navigator.userAgent;
-  return /[?&]stack\b/.test(location.search) || /iPhone|iPad|iPod/.test(ua) ||
-    (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+  return /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
     (/Safari/.test(ua) && !/Chrome|Chromium|Android|Edg|OPR|Firefox/.test(ua));
 })();
+const HEVC = WEBKIT && !!document.createElement('video').canPlayType('video/mp4; codecs="hvc1"');
+const STACKED = /[?&]stack\b/.test(location.search) || (WEBKIT && !HEVC);
 
 const attach = (v) => {
   if (!v.dataset.webm || v.dataset.attached) return;
   v.dataset.attached = '1';
-  v.src = STACKED ? v.dataset.sa : v.dataset.webm;
+  v.src = STACKED ? v.dataset.sa : (WEBKIT && v.dataset.hevc ? v.dataset.hevc : v.dataset.webm);
 };
 
 function stackedCanvas(v) {
