@@ -116,6 +116,9 @@ function stackedCanvas(v) {
   ['loadeddata', 'seeked', 'playing'].forEach((e) => v.addEventListener(e, draw));
 }
 if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas);
+// Safari: give the WB videos their source right away, like every other video on the page (lazy-assigned sources showed a
+// black, crossed-out frame in Safari whenever autoplay was refused).
+if (WEBKIT) document.querySelectorAll('video[data-webm]').forEach(attach);
 
 // Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
 // Gapless loop: the native `loop` attribute only restarts AFTER the last frame has been shown and the decoder has run
