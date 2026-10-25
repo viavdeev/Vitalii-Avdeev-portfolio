@@ -45,6 +45,18 @@ document.querySelectorAll('.carousel').forEach((el) => {
   });
 });
 
+// Transparent videos (WB Club phones): VP9-with-alpha WebM everywhere except WebKit (Safari, every iOS browser), which ignores the
+// alpha channel and would draw a solid frame around the phone. WebKit gets the opaque H.264 twin instead.
+{
+  const ua = navigator.userAgent;
+  const webkit = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+    (/Safari/.test(ua) && !/Chrome|Chromium|Android|Edg|OPR|Firefox/.test(ua));
+  document.querySelectorAll('video[data-webm]').forEach((v) => {
+    v.src = webkit ? v.dataset.mp4 : v.dataset.webm;
+    v.load();
+  });
+}
+
 // Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
 // Gapless loop: the native `loop` attribute only restarts AFTER the last frame has been shown and the decoder has run
 // dry (visible hiccup, black flash in some browsers). Instead, the moment the LAST frame is presented we seek back to 0

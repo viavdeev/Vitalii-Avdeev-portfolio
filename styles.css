@@ -38,7 +38,7 @@
   --home-top: 140px;    /* home padding-top */
   --section-gap: 160px; /* between projects / footer */
   --project-gap: 24px;  /* project header → carousel */
-  --k: 1;               /* slide scale: 504px tall slides */
+  --k: 1;               /* slide scale: slides are authored 504px tall (tablet 1, desktop 1.5, mobile 0.4167) */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -214,6 +214,11 @@ video.box { display: block; }
 @media (hover: hover) {
   .intro a, .phead a, .footer a { transition: opacity .2s ease; }
   .intro a:hover, .phead a:hover, .footer a:hover { opacity: .5; }
+}
+
+/* ═════════ Desktop ≥1280: slides 756px tall (1.5 × 504), as in the Figma desktop frame ═════════ */
+@media (min-width: 1280px) {
+  :root { --k: 1.5; }
 }
 
 /* ═════════ Tablet 744–1279 (iPad mini / small / big) ═════════ */
