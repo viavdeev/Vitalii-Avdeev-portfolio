@@ -116,9 +116,9 @@ function stackedCanvas(v) {
   ['loadeddata', 'seeked', 'playing'].forEach((e) => v.addEventListener(e, draw));
 }
 if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas);
-// Safari: give the WB videos their source right away, like every other video on the page (lazy-assigned sources showed a
-// black, crossed-out frame in Safari whenever autoplay was refused).
-if (WEBKIT) document.querySelectorAll('video[data-webm]').forEach(attach);
+// Give the WB videos their source right away (like every other video on the page) so they are buffered long before
+// they scroll into view.
+document.querySelectorAll('video[data-webm]').forEach(attach);
 
 // Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
 // Gapless loop: the native `loop` attribute only restarts AFTER the last frame has been shown and the decoder has run
@@ -171,13 +171,13 @@ if ('IntersectionObserver' in window && videos.length) {
   // 1) vertical: is the carousel within ~1 screen of the viewport?
   const ioPage = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
     target.querySelectorAll('video[autoplay]').forEach((v) => { pageNear.set(v, isIntersecting); sync(v); });
-  }), { rootMargin: '100% 0px' });
+  }), { rootMargin: '150% 0px' });
   // 2) horizontal: is the slide within ~1 screen of the visible part of its carousel?
   document.querySelectorAll('.carousel').forEach((rail) => {
     ioPage.observe(rail);
     const ioRail = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
       railNear.set(target, isIntersecting); sync(target);
-    }), { root: rail, rootMargin: '0px 100% 0px 100%' });
+    }), { root: rail, rootMargin: '0px 200% 0px 200%' });
     rail.querySelectorAll('video[autoplay]').forEach((v) => ioRail.observe(v));
   });
 }
