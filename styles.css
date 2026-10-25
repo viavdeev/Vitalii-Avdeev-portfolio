@@ -216,9 +216,10 @@ video.box { display: block; }
   .intro a:hover, .phead a:hover, .footer a:hover { opacity: .5; }
 }
 
-/* ═════════ Desktop ≥1280: slides 756px tall (1.5 × 504), as in the Figma desktop frame ═════════ */
+/* ═════════ Desktop ≥1280: HD projects (3x assets) show their slides at 1.5 × 504 = 756px, as in the Figma desktop frame.
+   Other projects stay at 504 until their 3x assets are in (their 2x files would turn soft when enlarged). ═════════ */
 @media (min-width: 1280px) {
-  :root { --k: 1.5; }
+  .project--hd { --k: 1.5; }
 }
 
 /* ═════════ Tablet 744–1279 (iPad mini / small / big) ═════════ */

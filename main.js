@@ -45,17 +45,65 @@ document.querySelectorAll('.carousel').forEach((el) => {
   });
 });
 
-// Transparent videos (WB Club phones): VP9-with-alpha WebM everywhere except WebKit (Safari, every iOS browser), which ignores the
-// alpha channel and would draw a solid frame around the phone. WebKit gets the opaque H.264 twin instead.
-{
+// Transparent videos (WB Club phones). They are fetched only when they get near the viewport (see sync() below).
+//  - Chrome / Firefox / Edge: VP9-with-alpha WebM, played natively (data-webm).
+//  - WebKit (Safari, and every browser on iOS) ignores the alpha channel of WebM, and H.264 has none. There the phone is
+//    delivered as a "stacked alpha" H.264 file (data-sa): colour (premultiplied) on the left half, alpha as grey on the right
+//    half. A tiny WebGL pass recombines the halves on a <canvas> laid over the (invisible) <video>, so the phone is
+//    truly transparent and no rectangle is ever visible. Append ?stack to the URL to force this path for testing.
+const STACKED = (() => {
   const ua = navigator.userAgent;
-  const webkit = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+  return /[?&]stack\b/.test(location.search) || /iPhone|iPad|iPod/.test(ua) ||
+    (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
     (/Safari/.test(ua) && !/Chrome|Chromium|Android|Edg|OPR|Firefox/.test(ua));
-  document.querySelectorAll('video[data-webm]').forEach((v) => {
-    v.src = webkit ? v.dataset.mp4 : v.dataset.webm;
-    v.load();
-  });
+})();
+
+const attach = (v) => {
+  if (!v.dataset.webm || v.dataset.attached) return;
+  v.dataset.attached = '1';
+  v.src = STACKED ? v.dataset.sa : v.dataset.webm;
+};
+
+function stackedCanvas(v) {
+  const c = document.createElement('canvas');
+  c.className = v.className; c.style.cssText = v.style.cssText;
+  c.style.pointerEvents = 'none'; c.setAttribute('aria-hidden', 'true');
+  c.style.backgroundImage = 'url("' + v.getAttribute('poster') + '")'; c.style.backgroundSize = '100% 100%';
+  v.after(c); v.style.opacity = '0';
+  const gl = c.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false });
+  if (!gl) return;                                   // no WebGL: the (transparent) poster simply stays
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 p;varying vec2 u;void main(){u=vec2((p.x+1.)*.5,(1.-p.y)*.5);gl_Position=vec4(p,0.,1.);}'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, 'precision mediump float;uniform sampler2D t;varying vec2 u;' +
+    'void main(){vec3 c=texture2D(t,vec2(u.x*.5,u.y)).rgb;float a=texture2D(t,vec2(.5+u.x*.5,u.y)).r;gl_FragColor=vec4(c,a);}'));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  let first = true;
+  const draw = () => {
+    if (v.readyState < 2 || !v.videoWidth) return;
+    const w = v.videoWidth >> 1, h = v.videoHeight;
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; gl.viewport(0, 0, w, h); }
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, v);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if (first) { first = false; c.style.backgroundImage = 'none'; }
+  };
+  if ('requestVideoFrameCallback' in v) {
+    const loop = () => { draw(); v.requestVideoFrameCallback(loop); };
+    v.requestVideoFrameCallback(loop);
+  } else {
+    const loop = () => { if (!v.paused) draw(); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+  ['loadeddata', 'seeked', 'playing'].forEach((e) => v.addEventListener(e, draw));
 }
+if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas);
 
 // Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
 // Gapless loop: the native `loop` attribute only restarts AFTER the last frame has been shown and the decoder has run
@@ -76,6 +124,7 @@ if ('IntersectionObserver' in window && videos.length) {
   };
   const sync = (v) => {
     if (near(v)) {
+      attach(v);
       if (v.paused) {
         if (v.dataset.follow) lock(v, true);
         v.play().catch(() => {});
