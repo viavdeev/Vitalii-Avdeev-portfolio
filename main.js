@@ -69,7 +69,7 @@ function stackedCanvas(v) {
   c.className = v.className; c.style.cssText = v.style.cssText;
   c.style.pointerEvents = 'none'; c.setAttribute('aria-hidden', 'true');
   c.style.backgroundImage = 'url("' + v.getAttribute('poster') + '")'; c.style.backgroundSize = '100% 100%';
-  v.after(c); v.style.opacity = '0';
+  v.after(c); v.style.opacity = '0.001';   // not 0: Safari stops decoding/presenting fully transparent videos
   const gl = c.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false });
   if (!gl) return;                                   // no WebGL: the (transparent) poster simply stays
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
@@ -94,13 +94,15 @@ function stackedCanvas(v) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if (first) { first = false; c.style.backgroundImage = 'none'; }
   };
-  if ('requestVideoFrameCallback' in v) {
-    const loop = () => { draw(); v.requestVideoFrameCallback(loop); };
-    v.requestVideoFrameCallback(loop);
-  } else {
-    const loop = () => { if (!v.paused) draw(); requestAnimationFrame(loop); };
-    requestAnimationFrame(loop);
-  }
+  // Redraw on every animation frame while playing (rAF, not requestVideoFrameCallback: Safari does not report frames of a
+  // video it doesn't composite, which left the canvas frozen on the first frame).
+  let raf = 0, last = -1;
+  const tick = () => {
+    if (v.currentTime !== last) { last = v.currentTime; draw(); }
+    raf = v.paused ? 0 : requestAnimationFrame(tick);
+  };
+  v.addEventListener('play', () => { if (!raf) raf = requestAnimationFrame(tick); });
+  v.addEventListener('playing', () => { if (!raf) raf = requestAnimationFrame(tick); });
   ['loadeddata', 'seeked', 'playing'].forEach((e) => v.addEventListener(e, draw));
 }
 if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas);
