@@ -57,7 +57,7 @@
 
 /* ───────── Intro: title, meta, hero ───────── */
 .cintro { display: flex; flex-direction: column; gap: 80px; }
-.cintro__head { display: flex; flex-direction: column; gap: 40px; max-width: 720px; }
+.cintro__head { display: flex; flex-direction: column; gap: 40px; width: min(720px, 100%); align-self: center; }
 .meta {
   margin: 0;
   display: grid;
@@ -139,7 +139,7 @@
 
 /* phone video on a plain background: mobile frame = 60px padding, phone at 50% width */
 .fig__media--phone { display: flex; justify-content: center; align-items: center; padding: 60px 0; }
-.fig__media--phone video { display: block; width: 50%; height: auto; }
+.fig__media--phone video { display: block; width: 50%; height: auto; object-fit: cover; }
 
 /* desktop screen recording inside the dark plate (Fig. 4.3) */
 .fig__media--screen { aspect-ratio: 1160 / 680; display: flex; align-items: center; justify-content: center; }
