@@ -184,3 +184,31 @@
 @media (max-width: 743.98px) {
   .cnav__cv { display: none; }
 }
+
+/* ═════════ WB Club case (Figma 5685:164850): its own type and spacing ═════════ */
+.case--wb .meta__team dd { max-width: 328px; }
+.case--wb .hero--wb { aspect-ratio: 1160 / 774; background: #e7a3d6; }
+.case--wb .ctext { gap: 32px; }
+.case--wb .ctext:not(.coutcome) .ctext__item { gap: 8px; }
+.case--wb .h2 { line-height: calc(35px + var(--f) * 4 / 354); }              /* 31/35 → 37/39 */
+.case--wb .h2--intro { line-height: calc(37px + var(--f) * 9.5 / 354); }      /* 31/37 → 37/46.5 */
+.case--wb .h2--outcome { line-height: var(--h2-lh); }                         /* Outcome: 37/41 */
+.case--wb .sec__text { gap: 8px; }
+.case--wb .sec__text--tight { gap: 4px; }
+.case--wb .lead { font-size: calc(16px + var(--f) * 3 / 354); line-height: calc(22.5px + var(--f) * 2.5 / 354); margin-bottom: 8px; }   /* 16/22.5 → 19/25 */
+.case--wb .sec--2 .lead { margin-bottom: 4px; }
+.case--wb .sec__text--tight .lead { margin-bottom: 12px; }
+.case--wb .sec__text b { font-weight: 550; }
+.case--wb .sec { --hg: 40px; }
+.case--wb .coutcome { gap: 60px; }
+.case--wb .coutcome .ctext__item { gap: calc(16px + var(--f) * 4 / 354); }
+.fig__media--video { position: relative; }
+.fig__media--video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (min-width: 744px) {
+  .case--wb .meta { column-gap: 24px; }
+}
+.fig__media--crop img { height: 100%; object-fit: cover; }
+@media (max-width: 743.98px) {
+  .case--wb .h1, .case--wb .h2 { text-wrap: balance; }   /* no one-word last lines on phones */
+  .case--wb .cpage p { text-wrap: pretty; }
+}
