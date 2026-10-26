@@ -116,9 +116,25 @@ function stackedCanvas(v) {
   ['loadeddata', 'seeked', 'playing'].forEach((e) => v.addEventListener(e, draw));
 }
 if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas);
-// Give the WB videos their source right away (like every other video on the page) so they are buffered long before
-// they scroll into view.
-document.querySelectorAll('video[data-webm]').forEach(attach);
+// Load the WB videos one after another, in slide order, starting at page load: the first one gets the whole connection
+// (in Safari the HEVC files are big, and downloading all of them at once made the first one lag), the next one starts
+// as soon as the previous one can play through. A video that scrolls near the viewport is attached immediately anyway.
+{
+  const queue = [...document.querySelectorAll('video[data-webm]')];
+  const next = () => {
+    const v = queue.shift();
+    if (!v) return;
+    const fresh = !v.dataset.attached;
+    attach(v);
+    if (!fresh || v.readyState >= 4) { next(); return; }
+    let done = false;
+    const go = () => { if (!done) { done = true; next(); } };
+    v.addEventListener('canplaythrough', go, { once: true });
+    v.addEventListener('error', go, { once: true });
+    setTimeout(go, 6000);
+  };
+  next();
+}
 
 // Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
 // Gapless loop: the native `loop` attribute only restarts AFTER the last frame has been shown and the decoder has run
