@@ -106,6 +106,7 @@ img { display: block; }
 }
 .phead__row { display: contents; }
 .phead__title { flex: 0 0 220px; font-weight: 550; }
+.phead__title a { display: inline; }
 .phead__desc  { flex: 0 0 320px; }
 .phead__tags  { flex: 1 0 0; min-width: 120px; }
 .phead__years { flex: 1 0 0; min-width: 80px; }
@@ -114,7 +115,7 @@ img { display: block; }
 
 /* "Link" / "Wiki": ghost buttons — invisible tap area, exactly 44 x 44 px (Apple HIG / WCAG 2.5.5 recommended
    minimum touch target), centred on the word; no layout shift */
-.phead__link a { position: relative; display: inline-block; }
+.phead__link a { position: relative; display: inline-block; font-weight: 550; text-decoration: underline; text-decoration-thickness: from-font; text-underline-offset: auto; }
 .phead__link a::after { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
 
 /* ───────── Carousel ───────── */
@@ -253,7 +254,7 @@ video.box { display: block; }
 @media (max-width: 743.98px) {
   :root {
     --pad-x: 12px;
-    --pad-top: 60px;
+    --pad-top: 24px;
     --pad-bottom: 24px;
     --intro-gap: 10px;
     --section-gap: 80px;
@@ -269,8 +270,9 @@ video.box { display: block; }
   .phead__row--1 { flex-direction: column; gap: 6px; }
   .phead__title { flex: none; width: 314px; max-width: 100%; }
   .phead__desc  { flex: none; width: 100%; max-width: none; }
-  .phead__row--2 { gap: 16px; }
-  .phead__tags  { flex: 0 0 160px; }
-  .phead__link  { text-align: right; }
+  /* tags on their own line, then years + link (Figma 5491:278718) */
+  .phead__row--2 { display: grid; grid-template-columns: auto auto 1fr; gap: 8px 16px; }
+  .phead__tags  { grid-column: 1 / -1; }
+  .phead__years, .phead__link { flex: none; white-space: nowrap; }
 
 }
