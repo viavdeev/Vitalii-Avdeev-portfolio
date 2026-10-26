@@ -32,10 +32,13 @@
 
 /* ───────── Top bar (serif 19/19) ───────── */
 .cnav {
-  position: absolute;
-  top: 12px;
-  left: var(--pad-x);
-  right: var(--pad-x);
+  position: fixed;                     /* stays on top while the case scrolls */
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px var(--pad-x);
+  background: var(--bg);
   display: flex;
   justify-content: space-between;
   gap: 24px;
@@ -49,11 +52,14 @@
 
 /* ───────── Type ───────── */
 .h1, .h2 { font-family: var(--serif); font-weight: 400; margin: 0; }
+/* pages without hand-set breaks (Go Invest follows its Figma breaks instead) */
+.case--balance .h1, .case--balance .h2 { text-wrap: balance; }
 .h1 { font-size: var(--h1); line-height: var(--h1-lh); letter-spacing: -0.01em; }
 .h2 { font-size: var(--h2); line-height: var(--h2-lh); letter-spacing: -0.01em; }
 .h2--intro { line-height: calc(37px + var(--f) * 4 / 354); }   /* The problem / My role: 31/37 → 37/41 */
 .cpage p, .meta { font-size: 13px; line-height: 19px; }
 .cpage p { margin: 0; }
+.case--balance .cpage p { text-wrap: pretty; }
 
 /* ───────── Intro: title, meta, hero ───────── */
 .cintro { display: flex; flex-direction: column; gap: 80px; }
