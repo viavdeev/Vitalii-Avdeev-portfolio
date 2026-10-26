@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Typographic non-breaking spaces for index.html (idempotent).
-Run after editing any visible copy:  python3 scripts/nbsp.py
+Run after editing any visible copy:  python3 scripts/nbsp.py [page.html]  (default index.html)
 Rules (body text only):
   1. articles (a, an, the) always stick to the next word; other short words (of, bound to the next word unless that is an article — no 3-word chains; to, in, on, at, by, as, or, and, for, is, AI) stick to the next word (pairs, never chains)
   2. names / fixed phrases never split: Vitalii Avdeev, Mexico City (GMT-6), Download CV, Core team, Web app ...
@@ -9,9 +9,11 @@ Rules (body text only):
 """
 import re, sys, pathlib
 NB = "&nbsp;"
-path = pathlib.Path(__file__).resolve().parent.parent / "index.html"
+root = pathlib.Path(__file__).resolve().parent.parent
+path = root / (sys.argv[1] if len(sys.argv) > 1 else "index.html")
 html = path.read_text(encoding="utf-8")
-head, sep, body = html.partition("<body>")
+_m = re.search(r"<body[^>]*>", html)
+head, sep, body = html[:_m.start()], _m.group(0), html[_m.end():]
 
 ARTICLE = r"(?:a|an|the)"            # articles ALWAYS stick to the following word (even inside a chain)
 SHORT = r"(?:of|to|in|on|at|by|as|or|and|for|is|AI|it|its)"

@@ -1,0 +1,177 @@
+/* ─────────────────────────────────────────────────────────────
+   Case study pages (Go Invest). Built on styles.css (fonts, colours, footer).
+   Figma frames: desktop 1600 (content 1160, text 520), mobile 390 (content 366, text 338).
+   Between 390 and 744 every size and gap interpolates linearly to its desktop
+   value (f = (100vw - 390px) / 354), so there are no jumps; from 744 the
+   desktop layout holds and the content column shrinks fluidly below 1192.
+   ───────────────────────────────────────────────────────────── */
+
+.case {
+  --f: clamp(0px, 100vw - 390px, 354px);      /* 0 at 390, 354px at ≥744 */
+  --pad-x: calc(12px + var(--f) * 4 / 354);    /* 12 → 16 */
+  --top: calc(172px + var(--f) * 40 / 354);    /* page top → title: 172 → 212 */
+  --gap: calc(80px + var(--f) * 40 / 354);     /* between blocks: 80 → 120 */
+  --h1: calc(31px + var(--f) * 6 / 354);       /* 31 → 37 */
+  --h1-lh: calc(37px + var(--f) * 6.5 / 354);  /* 37 → 43.5 */
+  --h2: calc(31px + var(--f) * 6 / 354);       /* 31 → 37 */
+  --h2-lh: calc(35px + var(--f) * 6 / 354);    /* 35 → 41 */
+  --text-w: calc(338px + var(--f) * 182 / 354);/* paragraph measure 338 → 520 */
+  --cap-w: calc(300px + var(--f) * 420 / 354); /* caption measure 300 → 720 */
+}
+
+.cpage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+  padding: var(--top) var(--pad-x) calc(12px - var(--f) * 12 / 354);
+  overflow-x: clip;
+}
+.cpage > * { width: min(1160px, 100%); }
+.cpage > .cfooter { width: 100%; }
+
+/* ───────── Top bar (serif 19/19) ───────── */
+.cnav {
+  position: absolute;
+  top: 12px;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 19px;
+  letter-spacing: -0.19px;
+  white-space: nowrap;
+}
+.cnav__links { display: flex; gap: 24px; }
+
+/* ───────── Type ───────── */
+.h1, .h2 { font-family: var(--serif); font-weight: 400; margin: 0; }
+.h1 { font-size: var(--h1); line-height: var(--h1-lh); letter-spacing: -0.01em; }
+.h2 { font-size: var(--h2); line-height: var(--h2-lh); letter-spacing: -0.01em; }
+.h2--intro { line-height: calc(37px + var(--f) * 4 / 354); }   /* The problem / My role: 31/37 → 37/41 */
+.cpage p, .meta { font-size: 13px; line-height: 19px; }
+.cpage p { margin: 0; }
+
+/* ───────── Intro: title, meta, hero ───────── */
+.cintro { display: flex; flex-direction: column; gap: 80px; }
+.cintro__head { display: flex; flex-direction: column; gap: 40px; max-width: 720px; }
+.meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.meta > div { display: flex; flex-direction: column; gap: 4px; }
+.meta dt { font-weight: 550; }
+.meta dd { margin: 0; }
+.meta__contrib dd { max-width: calc(154px + var(--f) * 198 / 354); }  /* 154 → 352 */
+.br-d { display: none; }
+
+.hero {
+  position: relative;
+  aspect-ratio: 1160 / 760.75;
+  background: #202022;
+  border-radius: 1px;
+  overflow: hidden;
+}
+.hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ───────── Text blocks (problem / role / outcome) ───────── */
+.ctext {
+  display: flex;
+  flex-direction: column;
+  gap: calc(32px + var(--f) * 8 / 354);       /* 32 → 40 */
+  width: min(520px, 100%) !important;
+}
+.ctext__item { display: flex; flex-direction: column; gap: 10px; }
+.ctext p, .sec__text p { max-width: var(--text-w); }
+
+.coutcome { gap: 60px; }
+.coutcome .ctext__item { gap: calc(16px + var(--f) * 4 / 354); }  /* 16 → 20 */
+.coutcome__thanks { display: flex; flex-direction: column; gap: 16px; }
+.coutcome__thanks hr { margin: 0; border: 0; height: 1px; background: var(--ink); transform: scaleY(.33); transform-origin: 0 0; }
+
+/* ───────── Sections: head + figures ───────── */
+.sec {
+  --fg: calc(24px + var(--f) * 16 / 354);     /* between figures: 24 → 40 */
+  --hg: calc(48px - var(--f) * 8 / 354);      /* head → first figure: 48 → 40 */
+  --tg: calc(16px + var(--f) * 4 / 354);      /* heading → text: 16 → 20 */
+  --pg: calc(8px + var(--f) * 4 / 354);       /* between paragraphs: 8 → 12 */
+  display: flex;
+  flex-direction: column;
+  gap: var(--fg);
+}
+.sec--1 { --fg: calc(24px + var(--f) * 24 / 354); --hg: 48px; }          /* 24 → 48, 48 */
+.sec--lib {
+  --hg: calc(32px + var(--f) * 8 / 354);      /* 32 → 40 */
+  --tg: calc(16px - var(--f) * 4 / 354);      /* 16 → 12 */
+  padding-top: calc(var(--f) * 32 / 354);     /* 0 → 32 */
+}
+.sec__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tg);
+  width: min(520px, 100%);
+  align-self: center;
+  margin-bottom: calc(var(--hg) - var(--fg));
+}
+.sec__text { display: flex; flex-direction: column; gap: var(--pg); }
+
+/* figures */
+.figs2 { display: flex; flex-direction: column; gap: var(--fg); }
+.fig { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.fig__media { position: relative; overflow: hidden; border-radius: 1px; }
+.fig__media img { display: block; width: 100%; height: auto; }
+.fig figcaption {
+  align-self: center;
+  max-width: var(--cap-w);
+  text-align: center;
+  font-size: 13px;
+  line-height: 19px;
+  color: #8f8fa3;
+  text-wrap: balance;
+}
+.light { background: #fafafa; }
+.dark  { background: #202022; }
+
+/* phone video on a plain background: mobile frame = 60px padding, phone at 50% width */
+.fig__media--phone { display: flex; justify-content: center; align-items: center; padding: 60px 0; }
+.fig__media--phone video { display: block; width: 50%; height: auto; }
+
+/* desktop screen recording inside the dark plate (Fig. 4.3) */
+.fig__media--screen { aspect-ratio: 1160 / 680; display: flex; align-items: center; justify-content: center; }
+.screen { position: relative; width: 70.2422%; aspect-ratio: 814.81 / 440; border-radius: .81px; overflow: hidden; background: #121212; }
+.screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ───────── Footer: desktop adds 140px of air above it ───────── */
+.cfooter { margin-top: calc(var(--f) * 140 / 354); }  /* 0 → 140 */
+
+@media (hover: hover) {
+  .cnav a { transition: opacity .2s ease; }
+  .cnav a:hover { opacity: .5; }
+}
+
+/* ═════════ ≥744: desktop layout ═════════ */
+@media (min-width: 744px) {
+  .meta { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 16px; }
+  .meta__team, .meta__contrib { grid-column: span 2; }
+  .meta__team dd { max-width: 260px; }
+  .meta__contrib dd { max-width: none; }
+  .br-d { display: inline; }
+  .sp-m { display: none; }
+
+  .figs2 { flex-direction: row; gap: 12px; }
+  .figs2 > .fig { flex: 1 1 0; }
+
+  /* 574 × 690 plate, phone 252.17px wide (43.93%), centred */
+  .fig__media--phone { padding: 0; aspect-ratio: 574 / 690; }
+  .fig__media--phone video { width: 43.932%; }
+}
+
+/* ═════════ <744: mobile ═════════ */
+@media (max-width: 743.98px) {
+  .cnav__cv { display: none; }
+}
