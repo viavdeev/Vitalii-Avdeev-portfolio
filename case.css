@@ -77,7 +77,9 @@
   border-radius: 1px;
   overflow: hidden;
 }
-.hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero > video, .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero.light { background: #fafafa; }
+.hero--screen { display: flex; align-items: center; justify-content: center; }
 
 /* ───────── Text blocks (problem / role / outcome) ───────── */
 .ctext {
@@ -142,8 +144,9 @@
 .fig__media--phone video { display: block; width: 50%; height: auto; object-fit: cover; }
 
 /* desktop screen recording inside the dark plate (Fig. 4.3) */
-.fig__media--screen { aspect-ratio: 1160 / 680; display: flex; align-items: center; justify-content: center; }
-.screen { position: relative; width: 70.2422%; aspect-ratio: 814.81 / 440; border-radius: .81px; overflow: hidden; background: #121212; }
+/* screen recordings centred on a plate; plate ratio, screen width/ratio/radius can be set per figure */
+.fig__media--screen { aspect-ratio: var(--ar, 1160 / 680); display: flex; align-items: center; justify-content: center; }
+.screen { position: relative; width: var(--sw, 70.2422%); aspect-ratio: var(--sar, 814.81 / 440); border-radius: var(--sr, .81px); overflow: hidden; background: #121212; }
 .screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ───────── Footer: desktop adds 140px of air above it ───────── */
