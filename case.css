@@ -38,7 +38,8 @@
   left: 0;
   right: 0;
   padding: 12px var(--pad-x);
-  background: var(--bg);
+  background: none;                    /* no white strip: the page scrolls visibly under the bar */
+  pointer-events: none;                /* the empty part of the bar doesn't block what is underneath… */
   display: flex;
   justify-content: space-between;
   gap: 24px;
@@ -49,6 +50,7 @@
   white-space: nowrap;
 }
 .cnav__links { display: flex; gap: 24px; }
+.cnav a { pointer-events: auto; }    /* …but the links stay clickable */
 
 /* ───────── Type ───────── */
 .h1, .h2 { font-family: var(--serif); font-weight: 400; margin: 0; }
