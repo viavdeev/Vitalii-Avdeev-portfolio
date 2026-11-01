@@ -6,7 +6,7 @@ Rules (body text only):
   2. names / fixed phrases never split: Vitalii Avdeev, Mexico City (GMT-6), Download CV, Core team, Web app ...
   3. "&" sticks to both neighbours
   3b. any one-character word (a letter or a digit: "3", "2", "I", "a") sticks to the next word, so a line never ends with it
-  4. the last two words of every text run stick together (no one-word last line)
+  4. the last two words of every text run stick together (no one-word last line), but never as a 3-word chain
 """
 import re, sys, pathlib
 NB = "&nbsp;"
@@ -43,8 +43,10 @@ def fix(text):
             bind(i)                       # a / an / the + next word, always
         elif re.fullmatch(SHORT, w, flags=re.I) and not tail[i] and not re.fullmatch(ARTICLE, re.sub(r"\W", "", tok[i + 1]), flags=re.I):
             bind(i)                       # short word sticks to the next one (pairs only, no chains)
-    if n > 2:
-        join[n - 2] = True                # never leave a single word alone on the last line
+    if n > 2 and not join[n - 3]:
+        join[n - 2] = True                # never leave a single word alone on the last line — unless that would weld three
+                                          # words into one unbreakable chunk (e.g. "and members' spending."), which tears a
+                                          # wide gap into the line above; text-wrap: pretty covers the orphan case instead
     out = tok[0]
     for i in range(1, n):
         out += (NB if join[i - 1] else " ") + tok[i]

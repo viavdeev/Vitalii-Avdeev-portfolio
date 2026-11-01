@@ -109,7 +109,7 @@ img { display: block; }
 .phead__row { display: contents; }
 .phead__title { flex: 0 0 220px; font-weight: 550; }
 .phead__title a { display: inline; }
-.phead__desc  { flex: 0 0 320px; }
+.phead__desc  { flex: 0 0 320px; text-wrap: pretty; }
 .phead__tags  { flex: 1 0 0; min-width: 120px; }
 .phead__years { flex: 1 0 0; min-width: 80px; }
 .phead__link  { flex: 1 0 0; min-width: 1px; }

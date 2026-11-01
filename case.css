@@ -59,7 +59,7 @@
 .h1 { font-size: var(--h1); line-height: var(--h1-lh); letter-spacing: -0.01em; }
 .h2 { font-size: var(--h2); line-height: var(--h2-lh); letter-spacing: -0.01em; }
 .h2--intro { line-height: calc(37px + var(--f) * 4 / 354); }   /* The problem / My role: 31/37 → 37/41 */
-.cpage p, .meta { font-size: var(--body-fs); line-height: var(--body-lh); }
+.cpage p, .meta { font-size: var(--body-fs); line-height: var(--body-lh); text-wrap: pretty; }   /* pretty: no one-word last lines, without welding words together */
 .cpage p { margin: 0; }
 .case--balance .cpage p { text-wrap: pretty; }
 
