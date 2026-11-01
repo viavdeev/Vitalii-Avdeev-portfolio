@@ -5,6 +5,7 @@ Rules (body text only):
   1. articles (a, an, the) always stick to the next word; other short words (of, bound to the next word unless that is an article — no 3-word chains; to, in, on, at, by, as, or, and, for, is, AI) stick to the next word (pairs, never chains)
   2. names / fixed phrases never split: Vitalii Avdeev, Mexico City (GMT-6), Download CV, Core team, Web app ...
   3. "&" sticks to both neighbours
+  3b. any one-character word (a letter or a digit: "3", "2", "I", "a") sticks to the next word, so a line never ends with it
   4. the last two words of every text run stick together (no one-word last line)
 """
 import re, sys, pathlib
@@ -36,6 +37,8 @@ def fix(text):
         w = re.sub(r"\W", "", tok[i])
         if "&amp;" in (tok[i], tok[i + 1]):
             bind(i)                       # "&" sticks to both neighbours
+        elif len(w) == 1 and w.isalnum():
+            bind(i)                       # one-character words (digits too: "3 analysts") never end a line
         elif re.fullmatch(ARTICLE, w, flags=re.I):
             bind(i)                       # a / an / the + next word, always
         elif re.fullmatch(SHORT, w, flags=re.I) and not tail[i] and not re.fullmatch(ARTICLE, re.sub(r"\W", "", tok[i + 1]), flags=re.I):
