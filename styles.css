@@ -38,7 +38,7 @@
   --home-top: 140px;    /* home padding-top */
   --section-gap: 160px; /* between projects / footer */
   --project-gap: 24px;  /* project header → carousel */
-  --body-fs: 14px;      /* body text (14 / 21; was 13 / 19) */
+  --body-fs: 14px;      /* case-page body text (14 / 21); the home page keeps 13 / 19 */
   --body-lh: 21px;
   --k: 1;               /* slide scale: slides are authored 504px tall (tablet 1, desktop 1.5, mobile 0.4167) */
 }
@@ -101,8 +101,8 @@ img { display: block; }
   display: flex;
   gap: 80px;
   align-items: flex-start;
-  font-size: var(--body-fs);
-  line-height: var(--body-lh);
+  font-size: 13px;
+  line-height: 19px;
   font-weight: 400;
   word-break: break-word;
 }
