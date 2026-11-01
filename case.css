@@ -59,7 +59,7 @@
 .h1 { font-size: var(--h1); line-height: var(--h1-lh); letter-spacing: -0.01em; }
 .h2 { font-size: var(--h2); line-height: var(--h2-lh); letter-spacing: -0.01em; }
 .h2--intro { line-height: calc(37px + var(--f) * 4 / 354); }   /* The problem / My role: 31/37 → 37/41 */
-.cpage p, .meta { font-size: 13px; line-height: 19px; }
+.cpage p, .meta { font-size: var(--body-fs); line-height: var(--body-lh); }
 .cpage p { margin: 0; }
 .case--balance .cpage p { text-wrap: pretty; }
 
@@ -139,8 +139,8 @@
   align-self: center;
   max-width: var(--cap-w);
   text-align: center;
-  font-size: 13px;
-  line-height: 19px;
+  font-size: var(--body-fs);
+  line-height: var(--body-lh);
   color: #8f8fa3;
   text-wrap: balance;
 }
