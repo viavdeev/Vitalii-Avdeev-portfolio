@@ -34,7 +34,9 @@ PHRASES = [
 ]
 
 def is_func(w):
-    return (1 <= len(w) <= 3 and w.isalnum()) or w.lower() in LONG_FUNC
+    # up to 3 letters, or a plain number of up to 3 digits; NOT quantities like "5.3M" / "2.2M" (they take the word before them
+    # along, they don't pull the next one in: "from 2.2M to 5.3M" keeps "to" with "5.3M")
+    return (1 <= len(w) <= 3 and (w.isalpha() or w.isdigit())) or w.lower() in LONG_FUNC
 
 def fix(text, limit=MAX_CHAIN):
     t = text.replace(NB, " ")            # idempotent: start from plain spaces
