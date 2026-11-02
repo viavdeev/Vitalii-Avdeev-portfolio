@@ -58,7 +58,7 @@ def fix(text, limit=MAX_CHAIN):
             i += 1
         return i
     for i in range(n - 1):
-        if join[i] or not is_func(word[i]):
+        if join[i] or not is_func(word[i]) or re.search(r"[!?;:]$|(?<!Fig)\.$", tok[i]):   # never across a sentence end
             continue
         a, b = chunk_start(i), chunk_end(i + 1)
         if len(" ".join(tok[a:b + 1]).replace(NB, " ")) <= limit:
