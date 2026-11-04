@@ -292,8 +292,8 @@ video.box { display: block; }
 .anim .intro__links a:not(.r-in),
 .anim .phead:not(.r-in),
 .anim .slide:not(.r-in),
-.anim .footer__links a:not(.r-in),
-.anim .footer__copy:not(.r-in) { opacity: 0; }
+.anim body:not(.case) .footer__links a:not(.r-in),
+.anim body:not(.case) .footer__copy:not(.r-in) { opacity: 0; }   /* home only: the case pages have no footer reveal */
 /* while a hero paragraph is split into its visual lines (only during the animation) */
 .intro__text .ln { display: block; white-space: nowrap; text-indent: 0; }
 .intro__text .ln:first-child { text-indent: inherit; }

@@ -174,8 +174,8 @@
 .fig__media--video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .fig__media--crop img { height: 100%; object-fit: cover; }
 
-/* ───────── Footer: 140px of air above it on desktop (Figma), the same type as on the home page ───────── */
-.cfooter { margin-top: calc(var(--f) * 140 / 354); }  /* 0 → 140 */
+/* ───────── Footer: 80px of air above it on desktop (Figma), on top of the 100 block gap; the same type as on the home page ───────── */
+.cfooter { margin-top: calc(var(--f) * 80 / 354); }  /* 0 → 80 */
 .case .footer__links { letter-spacing: -0.021em; }
 
 @media (hover: hover) {
