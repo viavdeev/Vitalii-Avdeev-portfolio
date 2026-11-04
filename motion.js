@@ -94,17 +94,37 @@
   };
 
   // ── Projects: header (blur, like the hero) then slides fading up one after another ─────────────────────────────────
-  const playProject = (sec, delay) => {
+  // Slides never fade in empty: they wait until the pictures they show are downloaded AND decoded, so they arrive
+  // complete. If that takes longer than `cap` ms (slow connection) they come in anyway and fill in as usual.
+  const settled = (p) => p.then(() => {}, () => {});
+  const imgReady = (img) => settled(img.decode ? img.decode() : (img.complete ? Promise.resolve() : new Promise((r) => { img.onload = img.onerror = r; })));
+  const mediaReady = (slides) => {
+    const waits = [];
+    slides.forEach((sl) => {
+      sl.querySelectorAll('img').forEach((img) => waits.push(imgReady(img)));
+      sl.querySelectorAll('video').forEach((v) => {
+        const src = v.getAttribute('poster') || v.dataset.poster;
+        if (src) { const i = new Image(); i.src = src; waits.push(imgReady(i)); }
+      });
+    });
+    return Promise.all(waits);
+  };
+
+  const playProject = (sec, delay, cap) => {
+    const t0 = performance.now();
     const head = sec.querySelector('.phead');
-    if (head) reveal(head, { delay, blur: 8, shift: '10px' });
-    const slides = [...sec.querySelectorAll('.slide')];
+    if (head) reveal(head, { delay, blur: 8, shift: '10px' });   // text needs nothing but the font: on schedule
     const rail = sec.querySelector('.carousel');
     const edge = rail ? rail.getBoundingClientRect().right : innerWidth;
-    let k = 0;
-    slides.forEach((s) => {
+    const onScreen = [];
+    [...sec.querySelectorAll('.slide')].forEach((s) => {
       // only slides that are actually on screen animate; the rest are simply shown
-      if (s.getBoundingClientRect().left < edge && k < 6) reveal(s, { delay: delay + 120 + k++ * STEP_SLIDE, blur: 0, shift: '24px', dur: DUR_MEDIA });
-      else show(s);
+      if (s.getBoundingClientRect().left < edge && onScreen.length < 6) onScreen.push(s); else show(s);
+    });
+    Promise.race([mediaReady(onScreen), new Promise((r) => setTimeout(r, cap))]).then(() => {
+      const late = performance.now() - t0;                        // time already spent waiting
+      const base = Math.max(0, delay + 120 - late);
+      onScreen.forEach((s, k) => reveal(s, { delay: base + k * STEP_SLIDE, blur: 0, shift: '24px', dur: DUR_MEDIA }));
     });
   };
 
@@ -124,7 +144,7 @@
     let firstScreen = 0;
     document.querySelectorAll('.project').forEach((sec) => {
       const top = sec.getBoundingClientRect().top;
-      if (top < vh * 0.92 && sec.getBoundingClientRect().bottom > 0) playProject(sec, lastHeroLine + 200 + firstScreen++ * 150);
+      if (top < vh * 0.92 && sec.getBoundingClientRect().bottom > 0) playProject(sec, lastHeroLine + 200 + firstScreen++ * 150, 3000);
       else later.push(sec);
     });
     const footer = document.querySelector('.footer');
@@ -137,7 +157,7 @@
       const el = e.target;
       // Scrolled past already (e.g. a jump to the bottom): show it without animation.
       if (e.boundingClientRect.bottom < 0) { el.querySelectorAll('.phead, .slide, .footer__links a, .footer__copy').forEach(show); return; }
-      if (el.classList.contains('footer')) playFooter(el); else playProject(el, 0);
+      if (el.classList.contains('footer')) playFooter(el); else playProject(el, 0, 1200);
     }), { rootMargin: '0px 0px -12% 0px' });
     later.forEach((el) => io.observe(el));
   };

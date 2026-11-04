@@ -116,7 +116,41 @@ function stackedCanvas(v) {
   ['loadeddata', 'seeked', 'playing'].forEach((e) => v.addEventListener(e, draw));
 }
 if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas);
-// Load the WB videos one after another, in slide order, starting at page load: the first one gets the whole connection
+// Loading order. The first screen goes first: the font and the first three slides of the first carousel (marked eager,
+// the first one fetchpriority=high). Everything else waits until those are in (4 s at most): the other slide images
+// (loading="lazy" in the HTML), the video posters (data-poster), then the WB alpha videos and the other videos
+// (data-src). Before, ~6 MB of images and videos started at once and the first slides arrived last on slow connections.
+// Once released, everything is still fetched straight away (not on scroll), so nothing is requested late.
+let mediaReady = false;
+const afterFirst = new Promise((resolve) => {
+  const loaded = (img) => (img.complete ? Promise.resolve() : new Promise((r) => {
+    img.addEventListener('load', r, { once: true }); img.addEventListener('error', r, { once: true });
+  }));
+  const waits = [];
+  const rail = document.querySelector('.project .carousel');
+  if (rail) [...rail.querySelectorAll('.slide')].slice(0, 3).forEach((sl) => {
+    sl.querySelectorAll('img').forEach((img) => waits.push(loaded(img)));
+    sl.querySelectorAll('video[poster]').forEach((v) => { const i = new Image(); i.src = v.poster; waits.push(loaded(i)); });
+  });
+  Promise.race([Promise.all(waits), new Promise((r) => setTimeout(r, 4000))]).then(resolve);
+});
+window.__afterFirst = afterFirst;
+afterFirst.then(() => {
+  const imgs = [...document.querySelectorAll('img[loading="lazy"]')];
+  imgs.forEach((img) => { img.loading = 'eager'; });
+  document.querySelectorAll('video[data-poster]').forEach((v) => { v.poster = v.dataset.poster; });
+  mediaReady = true;
+  startWbQueue();
+  if (window.__resync) window.__resync();
+  // plain videos (other projects) once the images are in, so they don't compete with them
+  const pending = imgs.filter((i) => !i.complete).map((i) => new Promise((r) => { i.addEventListener('load', r, { once: true }); i.addEventListener('error', r, { once: true }); }));
+  Promise.race([Promise.all(pending), new Promise((r) => setTimeout(r, 3000))]).then(() => {
+    document.querySelectorAll('video[data-src]').forEach((v) => { v.src = v.dataset.src; v.removeAttribute('data-src'); });
+    if (window.__resync) window.__resync();
+  });
+});
+
+// Load the WB videos one after another, in slide order, starting once the first screen is in: the first one gets the whole connection
 // (in Safari the HEVC files are big, and downloading all of them at once made the first one lag), the next one starts
 // as soon as the previous one can play through. A video that scrolls near the viewport is attached immediately anyway.
 {
@@ -133,7 +167,7 @@ if (STACKED) document.querySelectorAll('video[data-webm]').forEach(stackedCanvas
     v.addEventListener('error', go, { once: true });
     setTimeout(go, 6000);
   };
-  next();
+  var startWbQueue = next;   // started by the loading order above
 }
 
 // Videos: autoplay + loop, encoded at 1.2x. Preloaded, started just before they scroll into view, paused when far away.
@@ -155,6 +189,7 @@ if ('IntersectionObserver' in window && videos.length) {
   };
   const sync = (v) => {
     if (near(v)) {
+      if (!mediaReady || v.dataset.src) return;        // see 'Loading order'
       attach(v);
       if (v.paused) {
         if (v.dataset.follow) lock(v, true);
@@ -166,6 +201,7 @@ if ('IntersectionObserver' in window && videos.length) {
   // first real interaction anywhere on the page (click, tap, key, carousel drag).
   const unlock = () => videos.forEach((v) => { if (near(v) && v.paused) { attach(v); v.play().catch(() => {}); } });
   ['pointerdown', 'touchend', 'keydown'].forEach((e) => window.addEventListener(e, unlock, { passive: true }));
+  window.__resync = () => videos.forEach(sync);
 
   videos.filter((v) => v.dataset.follow).forEach((f) => {
     const L = document.getElementById(f.dataset.follow);
@@ -198,8 +234,8 @@ if ('IntersectionObserver' in window && videos.length) {
   });
 }
 
-// Images: every slide image is fetched right after first paint (small WebP, ~1.5 MB in total, low priority so the
-// first screen is never delayed) — no lazy-loading, so nothing is "requested late" while you scroll.
+// Images: every slide image is fetched as soon as the first screen is in (see 'Loading order') — no scroll-driven
+// lazy-loading, so nothing is "requested late" while you scroll.
 // Then the browser is asked to DECODE the slides ahead of the viewport (about 1.5 screens either side), so the
 // next picture is already a ready bitmap when it slides in.
 if ('IntersectionObserver' in window) {

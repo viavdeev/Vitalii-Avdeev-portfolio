@@ -197,10 +197,10 @@ video.box { display: block; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  font-family: var(--serif);
-  font-size: 37px;
-  line-height: 46.5px;
-  letter-spacing: -0.37px;
+  /* same type as the top menu: ALS Hauss 33.5 / 45.2, tracking −2.3% (mobile 28 / 37.5) */
+  font-size: 33.5px;
+  line-height: 45.2px;
+  letter-spacing: -0.023em;
   white-space: nowrap;
 }
 .footer__copy {
@@ -226,7 +226,6 @@ video.box { display: block; }
    Other projects stay at 504 until their 3x assets are in (their 2x files would turn soft when enlarged). ═════════ */
 @media (min-width: 1280px) {
   .project--hd { --k: 1.5; }
-  .footer__links { line-height: 48.5px; }   /* bottom menu 37 / 48.5 */
 }
 
 /* ═════════ Tablet 744–1279 (iPad mini / small / big) ═════════ */
@@ -271,15 +270,10 @@ video.box { display: block; }
     font-size: 24.5px;
     line-height: 33px;
   }
-  /* top menu (LinkedIn…) 28 / 37.5 in the new sans; bottom menu (E-mail…) stays serif 31 / 41.5 */
-  .intro__links {
+  /* both menus, top (LinkedIn…) and bottom (E-mail…): 28 / 37.5 */
+  .intro__links, .footer__links {
     font-size: 28px;
     line-height: 37.5px;
-  }
-  .footer__links {
-    font-size: 31px;
-    line-height: 41.5px;
-    letter-spacing: -0.31px;
   }
 
   .phead__row--1 { flex-direction: column; gap: 6px; }
