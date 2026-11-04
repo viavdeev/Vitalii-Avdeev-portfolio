@@ -286,8 +286,8 @@ video.box { display: block; }
 
 }
 
-/* ═════════ Entrance motion (motion.js). The hidden state exists only while <html> has .anim, which an inline script in
-   <head> sets before first paint — never with reduced motion, without JS, or once motion.js has given up. ═════════ */
+/* ═════════ Entrance motion (inline script at the end of index.html). The hidden state exists only while <html> has .anim, which an inline script in
+   <head> sets before first paint — never with reduced motion, without JS, or once that script has given up. ═════════ */
 .anim .intro__text p:not(.r-in),
 .anim .intro__links a:not(.r-in),
 .anim .phead:not(.r-in),
