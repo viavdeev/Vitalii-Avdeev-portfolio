@@ -12,7 +12,13 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/als-hauss-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/styles.css?v=606846e1">
+<link rel="stylesheet" href="/styles.css?v=9bd6ab52">
+<script>
+/* Entrance motion: hide the animated elements before first paint (see motion.js). Skipped with reduced motion; removed
+   again if motion.js has not started within 3 s, so the page never stays blank. */
+(function(){var d=document.documentElement;if(!d.animate||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+d.classList.add('anim');setTimeout(function(){if(!window.__motion)d.classList.remove('anim')},3000)})();
+</script>
 <script>
 /* Analytics opt-out for the site owner: open any page with ?notrack once per browser to stop counting it, ?track to count it again. */
 (function(){try{var q=location.search,s=localStorage;
@@ -30,8 +36,8 @@ window.va('beforeSend',function(e){try{if(localStorage.getItem('notrack'))return
   <!-- Intro -->
   <header class="intro">
     <div class="intro__text">
-      <p>Vitalii&nbsp;Avdeev is&nbsp;a&nbsp;product designer connecting strategic vision with&nbsp;thoughtful interaction and&nbsp;visual craft. Across domains, he&nbsp;brings a&nbsp;broad perspective to&nbsp;complex challenges, using research, system thinking, and&nbsp;AI&nbsp;to accelerate exploration and&nbsp;create clear, coherent digital&nbsp;experiences.</p>
-      <p>Currently based in&nbsp;Mexico&nbsp;City&nbsp;(GMT-6).</p>
+      <p>Vitalii&nbsp;Avdeev is&nbsp;a&nbsp;product designer connecting strategic vision with&nbsp;thoughtful interaction and&nbsp;visual craft. Across domains, he&nbsp;brings a&nbsp;broad perspective to&nbsp;complex challenges, using research, system thinking, and&nbsp;AI to&nbsp;accelerate exploration and&nbsp;create clear, coherent digital&nbsp;experiences.</p>
+      <p class="intro__loc">Currently based in&nbsp;Mexico&nbsp;City&nbsp;(GMT-6).</p>
     </div>
     <nav class="intro__links" aria-label="Contacts">
       <a href="https://www.linkedin.com/in/vitalii-avdeev" target="_blank" rel="noopener" data-umami-event="LinkedIn click" data-umami-event-place="intro">LinkedIn</a>
@@ -47,7 +53,7 @@ window.va('beforeSend',function(e){try{if(localStorage.getItem('notrack'))return
       <div class="phead">
         <div class="phead__row phead__row--1">
           <h2 class="phead__title" id="p-wb"><a href="/wb-club" data-ev="Case open" data-ev-project="WB Club" data-ev-via="title">Growing the&nbsp;subscription program<br>of&nbsp;a&nbsp;150M-buyer marketplace</a></h2>
-          <p class="phead__desc">Led&nbsp;the&nbsp;design of&nbsp;WB&nbsp;Club across iOS&nbsp;and&nbsp;Android, from&nbsp;entry points and&nbsp;one-tap purchase to&nbsp;retention and&nbsp;a&nbsp;new&nbsp;VIP&nbsp;tier, helping grow the&nbsp;subscription from&nbsp;2.2M to&nbsp;5.3M members in&nbsp;a&nbsp;year.</p>
+          <p class="phead__desc">Led&nbsp;the&nbsp;design of&nbsp;WB&nbsp;Club across iOS&nbsp;and&nbsp;Android, helping grow the&nbsp;subscription from&nbsp;2.2M to&nbsp;5.3M members in&nbsp;a&nbsp;year.</p>
         </div>
         <div class="phead__row phead__row--2">
           <p class="phead__tags">E-commerce, Mobile,&nbsp;Subscriptions</p>
@@ -324,6 +330,7 @@ window.va('beforeSend',function(e){try{if(localStorage.getItem('notrack'))return
 
   </div>
 </main>
+<script src="/motion.js?v=00d006b2" defer></script>
 <script src="/analytics.js?v=9492ce8f" defer></script>
 <script src="/main.js?v=43556d27" defer></script>
 </body>

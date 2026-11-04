@@ -26,6 +26,7 @@
 
 :root {
   --ink: #242429;
+  --ink-2: #8f8fa3;     /* secondary text (hero location line) */
   --bg: #ffffff;
   --serif: "Times New Roman", Times, "Tinos", serif;
   --sans: "ALS Hauss", "Helvetica Neue", Arial, sans-serif;
@@ -68,23 +69,25 @@ img { display: block; }
   overflow-x: clip;
 }
 
-/* ───────── Intro (serif 37 / 46.5; hero text and menus 48.5 on desktop; mobile hero 27 / 34.5, menus 31 / 41.5) ───────── */
+/* ───────── Intro (ALS Hauss 33.5 / 45.2, tracking −2.3% — Figma 5872:509613; mobile hero 24.5 / 33, menu 28 / 37.5) ───────── */
 .intro {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 140px;
-  font-family: var(--serif);
-  font-size: 37px;
-  line-height: 46.5px;
-  letter-spacing: -0.37px;
+  font-family: var(--sans);
+  font-size: 33.5px;
+  line-height: 45.2px;
   font-weight: 400;
   word-break: break-word;
 }
-.intro__text { flex: 1 1 auto; max-width: 1158px; min-width: 0; }
-/* 10 spaces in the Figma text = 10 × (0.25em − 0.01em tracking) = 2.4em */
-.intro__text p { text-indent: 2.4em; }
-.intro__links { flex: 0 0 212px; display: flex; flex-direction: column; }
+/* tracking −2.3% (−0.7705px at 33.5), declared on each block so it scales with the mobile sizes */
+.intro__text, .intro__links { letter-spacing: -0.023em; }
+.intro__text { flex: 1 1 auto; max-width: 1168px; min-width: 0; }
+/* 10 spaces in the Figma text: 10 × (0.22em space − 0.023em tracking) ≈ 1.967em (66px at 33.5) */
+.intro__text p { text-indent: 1.967em; }
+.intro__text .intro__loc { color: var(--ink-2); }
+.intro__links { flex: 0 0 198px; display: flex; flex-direction: column; }
 .intro__links a { display: block; }
 
 /* ───────── Home ───────── */
@@ -223,7 +226,7 @@ video.box { display: block; }
    Other projects stay at 504 until their 3x assets are in (their 2x files would turn soft when enlarged). ═════════ */
 @media (min-width: 1280px) {
   .project--hd { --k: 1.5; }
-  .intro__text, .intro__links, .footer__links { line-height: 48.5px; }   /* hero text and both menus 37 / 48.5 */
+  .footer__links { line-height: 48.5px; }   /* bottom menu 37 / 48.5 */
 }
 
 /* ═════════ Tablet 744–1279 (iPad mini / small / big) ═════════ */
@@ -235,7 +238,7 @@ video.box { display: block; }
   }
   .intro__text { width: 100%; max-width: none; flex: none; }
   .intro__links { flex: none; }
-  .intro__links a { padding-left: 2.4em; } /* each link is indented 10 spaces */
+  .intro__links a { padding-left: 1.967em; } /* each link is indented 10 spaces */
 
   .phead {
     flex-direction: column;
@@ -265,12 +268,15 @@ video.box { display: block; }
     --k: 0.416666667; /* 210 / 504 */
   }
   .intro__text {
-    font-size: 27px;
-    line-height: 34.5px;
-    letter-spacing: -0.27px;
+    font-size: 24.5px;
+    line-height: 33px;
   }
-  /* menus: top (LinkedIn…) and bottom (E-mail…) 31 / 41.5 */
-  .intro__links, .footer__links {
+  /* top menu (LinkedIn…) 28 / 37.5 in the new sans; bottom menu (E-mail…) stays serif 31 / 41.5 */
+  .intro__links {
+    font-size: 28px;
+    line-height: 37.5px;
+  }
+  .footer__links {
     font-size: 31px;
     line-height: 41.5px;
     letter-spacing: -0.31px;
@@ -285,3 +291,16 @@ video.box { display: block; }
   .phead__years, .phead__link { flex: none; white-space: nowrap; }
 
 }
+
+/* ═════════ Entrance motion (motion.js). The hidden state exists only while <html> has .anim, which an inline script in
+   <head> sets before first paint — never with reduced motion, without JS, or once motion.js has given up. ═════════ */
+.anim .intro__text p:not(.r-in),
+.anim .intro__links a:not(.r-in),
+.anim .phead:not(.r-in),
+.anim .slide:not(.r-in),
+.anim .footer__links a:not(.r-in),
+.anim .footer__copy:not(.r-in) { opacity: 0; }
+/* while a hero paragraph is split into its visual lines (only during the animation) */
+.intro__text .ln { display: block; white-space: nowrap; text-indent: 0; }
+.intro__text .ln:first-child { text-indent: inherit; }
+@media print { .anim * { opacity: 1 !important; } }

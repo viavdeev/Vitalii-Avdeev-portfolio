@@ -30,12 +30,16 @@ LARGE_CLASSES = ("phead__title", "lead", "h1", "h2", "intro__text", "intro__link
 VOID = {"br", "img", "link", "meta", "source", "input", "hr", "wbr", "track"}
 PHRASES = [
     "Vitalii Avdeev", "Mexico City (GMT-6)", "Download CV", "Core team", "Web app",
-    "500K monthly", "2M daily", "Media Art", "Cross-platform,", "2026 Vitalii Avdeev",
+    "500K monthly", "2M daily", "Media Art", "Cross-platform,", "WB Club", "2026 Vitalii Avdeev",
 ]
 
 def is_func(w):
     # up to 3 letters, or a plain number of up to 3 digits; NOT quantities like "5.3M" / "2.2M" (they take the word before them
     # along, they don't pull the next one in: "from 2.2M to 5.3M" keeps "to" with "5.3M")
+    # Acronyms ("AI", "VIP", "UX") are content words, not function words: "and AI to accelerate" binds as
+    # "and AI" + "to accelerate", so "to" never ends a line.
+    if len(w) >= 2 and w.isupper():
+        return False
     return (1 <= len(w) <= 3 and (w.isalpha() or w.isdigit())) or w.lower() in LONG_FUNC
 
 def fix(text, limit=MAX_CHAIN):
