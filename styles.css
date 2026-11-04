@@ -69,7 +69,7 @@ img { display: block; }
   overflow-x: clip;
 }
 
-/* ───────── Intro (ALS Hauss 33.5 / 45.2, tracking −2.3% — Figma 5872:509613; mobile hero 24.5 / 33, menu 28 / 37.5) ───────── */
+/* ───────── Intro (ALS Hauss 33.5 / 46.2, tracking −2.3% — Figma 5872:509613; mobile hero 24.5 / 33, menu 28 / 37.5) ───────── */
 .intro {
   display: flex;
   align-items: flex-start;
@@ -77,7 +77,7 @@ img { display: block; }
   gap: 140px;
   font-family: var(--sans);
   font-size: 33.5px;
-  line-height: 45.2px;
+  line-height: 46.2px;
   font-weight: 400;
   word-break: break-word;
 }
@@ -197,9 +197,9 @@ video.box { display: block; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* same type as the top menu: ALS Hauss 33.5 / 45.2, tracking −2.3% (mobile 28 / 37.5) */
+  /* same type as the top menu: ALS Hauss 33.5 / 46.2, tracking −2.3% (mobile 28 / 37.5) */
   font-size: 33.5px;
-  line-height: 45.2px;
+  line-height: 46.2px;
   letter-spacing: -0.023em;
   white-space: nowrap;
 }

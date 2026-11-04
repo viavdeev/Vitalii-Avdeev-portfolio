@@ -1,22 +1,28 @@
 /* ─────────────────────────────────────────────────────────────
-   Case study pages (Go Invest). Built on styles.css (fonts, colours, footer).
-   Figma frames: desktop 1600 (content 1160, text 520), mobile 390 (content 366, text 338).
-   Between 390 and 744 every size and gap interpolates linearly to its desktop
-   value (f = (100vw - 390px) / 354), so there are no jumps; from 744 the
-   desktop layout holds and the content column shrinks fluidly below 1192.
+   Case study pages (all five). Built on styles.css (fonts, colours, footer).
+   Source of truth: the WB Club desktop frame, Figma 5872:502740 (1600 wide):
+     title + meta 720, cover 1280, text column 560, figures 1160, dividers full width.
+   Type: ALS Hauss Medium titles 33.5 (title 46.2 / headings 44.2, tracking −2.1%),
+         Times leads 25 / 29, body 15 / 24 (intro) and 15 / 24.5 (sections), small 13 / 19.
+   Mobile (390) uses the scale rates of the previous case design: titles × 0.84
+   (33.5 → 28), leads × 0.84 (25 → 21), gaps × ~0.65; body text keeps 15 / 24.
+   Between 390 and 744 every size and gap interpolates linearly to its desktop value
+   (f = (100vw − 390px) / 354), so there are no jumps; from 744 the desktop values hold
+   and the columns shrink fluidly when the window is narrower than they are.
    ───────────────────────────────────────────────────────────── */
 
 .case {
-  --f: clamp(0px, 100vw - 390px, 354px);      /* 0 at 390, 354px at ≥744 */
-  --pad-x: calc(12px + var(--f) * 4 / 354);    /* 12 → 16 */
-  --top: calc(172px + var(--f) * 40 / 354);    /* page top → title: 172 → 212 */
-  --gap: calc(80px + var(--f) * 40 / 354);     /* between blocks: 80 → 120 */
-  --h1: calc(31px + var(--f) * 6 / 354);       /* 31 → 37 */
-  --h1-lh: calc(37px + var(--f) * 6.5 / 354);  /* 37 → 43.5 */
-  --h2: calc(31px + var(--f) * 6 / 354);       /* 31 → 37 */
-  --h2-lh: calc(35px + var(--f) * 6 / 354);    /* 35 → 41 */
-  --text-w: calc(338px + var(--f) * 182 / 354);/* paragraph measure 338 → 520 */
-  --cap-w: calc(300px + var(--f) * 420 / 354); /* caption measure 300 → 720 */
+  --f: clamp(0px, 100vw - 390px, 354px);        /* 0 at 390, 354px at ≥744 */
+  --pad-x: calc(12px + var(--f) * 4 / 354);      /* 12 → 16 */
+  --top: calc(168px + var(--f) * 40 / 354);      /* page top → title: 168 → 208 */
+  --gap: calc(64px + var(--f) * 36 / 354);       /* between blocks, around dividers: 64 → 100 */
+  --sec-top: calc(16px + var(--f) * 16 / 354);   /* extra air above a section heading: 16 → 32 */
+  --fg: calc(24px + var(--f) * 16 / 354);        /* section heading → figure, between figures: 24 → 40 */
+  --title: calc(28px + var(--f) * 5.5 / 354);    /* titles 28 → 33.5 */
+  --title-lh: calc(37px + var(--f) * 9.2 / 354); /* page title 37 → 46.2 */
+  --h2-lh: calc(36px + var(--f) * 8.2 / 354);    /* headings 36 → 44.2 */
+  --lead: calc(21px + var(--f) * 4 / 354);       /* Times lead 21 → 25 */
+  --lead-lh: calc(24.5px + var(--f) * 4.5 / 354);/* 24.5 → 29 */
 }
 
 .cpage {
@@ -24,124 +30,132 @@
   flex-direction: column;
   align-items: center;
   gap: var(--gap);
-  padding: var(--top) var(--pad-x) calc(12px - var(--f) * 12 / 354);
+  padding: var(--top) var(--pad-x) 0;
   overflow-x: clip;
 }
 .cpage > * { width: min(1160px, 100%); }
-.cpage > .cfooter { width: 100%; }
+.cpage > .cfooter, .cpage > .cdiv { width: 100%; }
 
-/* ───────── Top bar (serif 19/19) ───────── */
+/* ───────── Top bar: ALS Hauss 15 / 17, tracking −1.7% ───────── */
 .cnav {
   position: fixed;                     /* stays on top while the case scrolls */
   z-index: 10;
   top: 0;
   left: 0;
   right: 0;
-  padding: 12px var(--pad-x);
+  padding: calc(12px - var(--f) * 4 / 354) var(--pad-x);   /* 12 → 8 */
   background: none;                    /* no white strip: the page scrolls visibly under the bar */
   pointer-events: none;                /* the empty part of the bar doesn't block what is underneath… */
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  font-family: var(--serif);
-  font-size: 19px;
-  line-height: 19px;
-  letter-spacing: -0.19px;
+  font-size: 15px;
+  line-height: 17px;
+  letter-spacing: -0.017em;
   white-space: nowrap;
 }
 .cnav__links { display: flex; gap: 24px; }
 .cnav a { pointer-events: auto; }    /* …but the links stay clickable */
 
 /* ───────── Type ───────── */
-.h1, .h2 { font-family: var(--serif); font-weight: 400; margin: 0; }
-/* pages without hand-set breaks (Go Invest follows its Figma breaks instead) */
-.case--balance .h1, .case--balance .h2 { text-wrap: balance; }
-.h1 { font-size: var(--h1); line-height: var(--h1-lh); letter-spacing: -0.01em; }
-.h2 { font-size: var(--h2); line-height: var(--h2-lh); letter-spacing: -0.01em; }
-.h2--intro { line-height: calc(37px + var(--f) * 4 / 354); }   /* The problem / My role: 31/37 → 37/41 */
-.cpage p, .meta { font-size: var(--body-fs); line-height: var(--body-lh); text-wrap: pretty; }   /* pretty: no one-word last lines, without welding words together */
-.cpage p { margin: 0; }
-.case--balance .cpage p { text-wrap: pretty; }
+.h1, .h2 {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 550;                    /* ALS Hauss Medium */
+  font-size: var(--title);
+  letter-spacing: -0.021em;            /* −0.7035px at 33.5 */
+}
+.h1 { line-height: var(--title-lh); }
+.h2 { line-height: var(--h2-lh); }
+.lead {
+  font-family: var(--serif);
+  font-size: var(--lead);
+  line-height: var(--lead-lh);
+  letter-spacing: -0.004em;            /* −0.1px at 25 */
+}
+.cpage p { margin: 0; text-wrap: pretty; }   /* pretty: no one-word last lines, without welding words together */
+.cpage b { font-weight: 550; }
 
-/* ───────── Intro: title, meta, hero ───────── */
-.cintro { display: flex; flex-direction: column; gap: 80px; }
-.cintro__head { display: flex; flex-direction: column; gap: 40px; width: min(720px, 100%); align-self: center; }
+/* ───────── Intro: title, meta, cover ───────── */
+.cintro { display: flex; flex-direction: column; align-items: center; gap: calc(48px + var(--f) * 32 / 354); }  /* meta → cover 48 → 80 */
+.cintro__head { display: flex; flex-direction: column; gap: calc(32px + var(--f) * 8 / 354); width: min(720px, 100%); }  /* 32 → 40 */
 .meta {
   margin: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  font-size: 13px;
+  line-height: 19px;
 }
 .meta > div { display: flex; flex-direction: column; gap: 4px; }
 .meta dt { font-weight: 550; }
 .meta dd { margin: 0; }
-.meta__contrib dd { max-width: calc(154px + var(--f) * 198 / 354); }  /* 154 → 352 */
 .br-d { display: none; }
 
 .hero {
   position: relative;
+  width: 100%;
   aspect-ratio: 1160 / 760.75;
   background: #202022;
   border-radius: 1px;
   overflow: hidden;
 }
+.cintro > .hero { width: min(1280px, 100vw - 2 * var(--pad-x)); }   /* the cover is wider than the figures: 1280 */
 .hero > video, .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero.light { background: #fafafa; }
 .hero--screen { display: flex; align-items: center; justify-content: center; }
 
-/* ───────── Text blocks (problem / role / outcome) ───────── */
+/* ───────── Text blocks (problem / role / achievements; closing block) ───────── */
 .ctext {
   display: flex;
   flex-direction: column;
-  gap: calc(32px + var(--f) * 8 / 354);       /* 32 → 40 */
-  width: min(520px, 100%) !important;
+  gap: calc(48px + var(--f) * 12 / 354);      /* between blocks: 48 → 60 */
+  width: min(560px, 100%) !important;
 }
-.ctext__item { display: flex; flex-direction: column; gap: 10px; }
-.ctext p, .sec__text p { max-width: var(--text-w); }
+.ctext__item { display: flex; flex-direction: column; gap: 12px; }
+.ctext__item > p + p { margin-top: -4px; }   /* paragraphs 8 apart */
+.ctext p, .clist { font-size: 15px; line-height: 24px; letter-spacing: -0.003em; }   /* 15 / 24, −0.045px */
+.clist { margin: 0; padding: 0 0 0 22.5px; list-style: disc; }
 
-.coutcome { gap: 60px; }
-.coutcome .ctext__item { gap: calc(16px + var(--f) * 4 / 354); }  /* 16 → 20 */
+/* closing block (Design library, Learnings): 13 / 19 in the Figma frame */
+.cend .ctext__item p { font-size: 13px; line-height: 19px; letter-spacing: 0; }
+.cend .ctext__item > p { max-width: 520px; }   /* Design library paragraph: 520; learnings use the full 560 */
+.clearn { display: flex; flex-direction: column; gap: 19px; }   /* one empty line between learnings */
+
+/* outcome of the other cases, with its thank-you line */
 .coutcome__thanks { display: flex; flex-direction: column; gap: 16px; }
 .coutcome__thanks hr { margin: 0; border: 0; height: 1px; background: var(--ink); transform: scaleY(.33); transform-origin: 0 0; }
 
+/* ───────── Divider between sections: a 0.33px line, #b6b6c9 ───────── */
+.cdiv { margin: 0; border: 0; height: 1px; position: relative; }
+.cdiv::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: #b6b6c9; transform: scaleY(.333); transform-origin: 0 0; }
+
 /* ───────── Sections: head + figures ───────── */
-.sec {
-  --fg: calc(24px + var(--f) * 16 / 354);     /* between figures: 24 → 40 */
-  --hg: calc(48px - var(--f) * 8 / 354);      /* head → first figure: 48 → 40 */
-  --tg: calc(16px + var(--f) * 4 / 354);      /* heading → text: 16 → 20 */
-  --pg: calc(8px + var(--f) * 4 / 354);       /* between paragraphs: 8 → 12 */
-  display: flex;
-  flex-direction: column;
-  gap: var(--fg);
-}
-.sec--1 { --fg: calc(24px + var(--f) * 24 / 354); --hg: 48px; }          /* 24 → 48, 48 */
-.sec--lib {
-  --hg: calc(32px + var(--f) * 8 / 354);      /* 32 → 40 */
-  --tg: calc(16px - var(--f) * 4 / 354);      /* 16 → 12 */
-  padding-top: calc(var(--f) * 32 / 354);     /* 0 → 32 */
-}
+.sec { display: flex; flex-direction: column; gap: var(--fg); }
 .sec__head {
   display: flex;
   flex-direction: column;
-  gap: var(--tg);
-  width: min(520px, 100%);
+  gap: 16px;
+  width: min(560px, 100%);
   align-self: center;
-  margin-bottom: calc(var(--hg) - var(--fg));
+  padding-top: var(--sec-top);
 }
-.sec__text { display: flex; flex-direction: column; gap: var(--pg); }
+.sec__title { display: flex; flex-direction: column; gap: 10px; }
+.sec__text { display: flex; flex-direction: column; gap: 8px; }
+.sec__text p { font-size: 15px; line-height: 24.5px; letter-spacing: -0.017em; }   /* 15 / 24.5, −0.255px */
 
 /* figures */
 .figs2 { display: flex; flex-direction: column; gap: var(--fg); }
 .fig { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.fig__media { position: relative; overflow: hidden; border-radius: 1px; }
+.fig__media { position: relative; overflow: hidden; border-radius: 1.26px; }
 .fig__media img { display: block; width: 100%; height: auto; }
 .fig figcaption {
   align-self: center;
-  max-width: var(--cap-w);
+  max-width: 720px;
   text-align: center;
-  font-size: var(--body-fs);
-  line-height: var(--body-lh);
-  color: #8f8fa3;
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--ink-2);
   text-wrap: balance;
 }
 .light { background: #fafafa; }
@@ -151,14 +165,18 @@
 .fig__media--phone { display: flex; justify-content: center; align-items: center; padding: 60px 0; }
 .fig__media--phone video { display: block; width: 50%; height: auto; object-fit: cover; }
 
-/* desktop screen recording inside the dark plate (Fig. 4.3) */
 /* screen recordings centred on a plate; plate ratio, screen width/ratio/radius can be set per figure */
 .fig__media--screen { aspect-ratio: var(--ar, 1160 / 680); display: flex; align-items: center; justify-content: center; }
 .screen { position: relative; width: var(--sw, 70.2422%); aspect-ratio: var(--sar, 814.81 / 440); border-radius: var(--sr, .81px); overflow: hidden; background: #121212; }
 .screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* ───────── Footer: desktop adds 140px of air above it ───────── */
+.fig__media--video { position: relative; }
+.fig__media--video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.fig__media--crop img { height: 100%; object-fit: cover; }
+
+/* ───────── Footer: 140px of air above it on desktop (Figma), the same type as on the home page ───────── */
 .cfooter { margin-top: calc(var(--f) * 140 / 354); }  /* 0 → 140 */
+.case .footer__links { letter-spacing: -0.021em; }
 
 @media (hover: hover) {
   .cnav a { transition: opacity .2s ease; }
@@ -167,10 +185,9 @@
 
 /* ═════════ ≥744: desktop layout ═════════ */
 @media (min-width: 744px) {
-  .meta { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 16px; }
+  .meta { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
   .meta__team, .meta__contrib { grid-column: span 2; }
-  .meta__team dd { max-width: 260px; }
-  .meta__contrib dd { max-width: none; }
+  .meta__team dd { max-width: 328px; }
   .br-d { display: inline; }
   .sp-m { display: none; }
 
@@ -185,32 +202,8 @@
 /* ═════════ <744: mobile ═════════ */
 @media (max-width: 743.98px) {
   .cnav__cv { display: none; }
+  .h1, .h2 { text-wrap: pretty; }      /* short measure: no one-word last line; balance split titles oddly (desktop follows the Figma breaks) */
 }
 
-/* ═════════ WB Club case (Figma 5685:164850): its own type and spacing ═════════ */
-.case--wb .meta__team dd { max-width: 328px; }
-.case--wb .hero--wb { aspect-ratio: 1160 / 774; background: #e7a3d6; }
-.case--wb .ctext { gap: 32px; }
-.case--wb .ctext:not(.coutcome) .ctext__item { gap: 8px; }
-.case--wb .h2 { line-height: calc(35px + var(--f) * 4 / 354); }              /* 31/35 → 37/39 */
-.case--wb .h2--intro { line-height: calc(37px + var(--f) * 9.5 / 354); }      /* 31/37 → 37/46.5 */
-.case--wb .h2--outcome { line-height: var(--h2-lh); }                         /* Outcome: 37/41 */
-.case--wb .sec__text { gap: 8px; }
-.case--wb .sec__text--tight { gap: 4px; }
-.case--wb .lead { font-size: calc(16px + var(--f) * 3 / 354); line-height: calc(22.5px + var(--f) * 2.5 / 354); margin-bottom: 8px; }   /* 16/22.5 → 19/25 */
-.case--wb .sec--2 .lead { margin-bottom: 4px; }
-.case--wb .sec__text--tight .lead { margin-bottom: 12px; }
-.case--wb .sec__text b { font-weight: 550; }
-.case--wb .sec { --hg: 40px; }
-.case--wb .coutcome { gap: 60px; }
-.case--wb .coutcome .ctext__item { gap: calc(16px + var(--f) * 4 / 354); }
-.fig__media--video { position: relative; }
-.fig__media--video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-@media (min-width: 744px) {
-  .case--wb .meta { column-gap: 24px; }
-}
-.fig__media--crop img { height: 100%; object-fit: cover; }
-@media (max-width: 743.98px) {
-  .case--wb .h1, .case--wb .h2 { text-wrap: balance; }   /* no one-word last lines on phones */
-  .case--wb .cpage p { text-wrap: pretty; }
-}
+/* ═════════ WB Club: cover plate colour ═════════ */
+.case--wb .hero--wb { aspect-ratio: 1280 / 854.07; background: #e7a3d6; }
