@@ -15,6 +15,12 @@ NB = "&nbsp;"
 root = pathlib.Path(__file__).resolve().parent.parent
 path = root / (sys.argv[1] if len(sys.argv) > 1 else "index.html")
 html = path.read_text(encoding="utf-8")
+# <script> and <style> blocks are never touched: they are swapped for placeholders first (so that markup-like text
+# inside them, e.g. "<body>" in a comment, can't confuse the parser) and put back at the end.
+_blocks = []
+def _keep(m):
+    _blocks.append(m.group(0)); return f"\x00{len(_blocks) - 1}\x00"
+html = re.sub(r"<(script|style)\b[^>]*>.*?</\1>", _keep, html, flags=re.S | re.I)
 _m = re.search(r"<body[^>]*>", html)
 head, sep, body = html[:_m.start()], _m.group(0), html[_m.end():]
 
@@ -114,5 +120,6 @@ def process(body):
     return "".join(out)
 
 body = process(body)
-path.write_text(head + sep + body, encoding="utf-8")
+out = re.sub(r"\x00(\d+)\x00", lambda m: _blocks[int(m.group(1))], head + sep + body)
+path.write_text(out, encoding="utf-8")
 print("ok:", body.count(NB), "non-breaking spaces")

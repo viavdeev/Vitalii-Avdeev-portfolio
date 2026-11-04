@@ -14,18 +14,18 @@
 <link rel="preload" href="/assets/fonts/als-hauss-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles.css?v=3c7deb20">
 <script>
-/* Entrance motion: hide the animated elements before first paint (see the inline script at the end of <body>). Skipped with&nbsp;reduced motion; removed
-   again if&nbsp;the&nbsp;motion script has&nbsp;not&nbsp;started within 3&nbsp;s,&nbsp;so&nbsp;the&nbsp;page never stays blank. */
-(function(){var d=document.documentElement;if(!d.animate||matchMedia('(prefers-reduced-motion:&nbsp;reduce)').matches)return;
+/* Entrance motion: hide the animated elements before first paint (see the inline script at the end of <body>). Skipped with reduced motion; removed
+   again if the motion script has not started within 3 s, so the page never stays blank. */
+(function(){var d=document.documentElement;if(!d.animate||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 d.classList.add('anim');setTimeout(function(){if(!window.__motion)d.classList.remove('anim')},3000)})();
 </script>
 <script>
-/* Analytics opt-out for&nbsp;the&nbsp;site owner: open any&nbsp;page with&nbsp;?notrack once per&nbsp;browser to&nbsp;stop counting it,&nbsp;?track to&nbsp;count it&nbsp;again. */
+/* Analytics opt-out for the site owner: open any page with ?notrack once per browser to stop counting it, ?track to count it again. */
 (function(){try{var q=location.search,s=localStorage;
 if(/[?&]notrack\b/.test(q)){s.setItem('umami.disabled','1');s.setItem('notrack','1')}
 else if(/[?&]track\b/.test(q)){s.removeItem('umami.disabled');s.removeItem('notrack')}}catch(e){}
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
-window.va('beforeSend',function(e){try{if(localStorage.getItem('notrack'))return null}catch(x){}return&nbsp;e})})();
+window.va('beforeSend',function(e){try{if(localStorage.getItem('notrack'))return null}catch(x){}return e})})();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="d7ef0425-1556-4c00-9c58-9a2c73c998ba" data-domains="viavdeev.com,www.viavdeev.com"></script>
@@ -331,182 +331,182 @@ window.va('beforeSend',function(e){try{if(localStorage.getItem('notrack'))return
   </div>
 </main>
 <script>
-// Entrance motion for&nbsp;the&nbsp;home page (inlined here, not&nbsp;a&nbsp;separate file: on&nbsp;slow connections a&nbsp;deferred download
-// kept the&nbsp;hero hidden for&nbsp;seconds), modelled on&nbsp;the&nbsp;linear.app hero (measured frame by&nbsp;frame, Nov&nbsp;2026):
-// every visual line of&nbsp;the&nbsp;hero fades in&nbsp;from&nbsp;opacity 0&nbsp;+ blur(10px) + translateY(20% of&nbsp;its&nbsp;height) over&nbsp;~1&nbsp;s&nbsp;with an
-//&nbsp;ease-out-quad curve, the&nbsp;lines 100&nbsp;ms&nbsp;apart. Here the&nbsp;same motion runs on&nbsp;the&nbsp;hero copy (line by&nbsp;line), the&nbsp;right-hand
-// menu (link by&nbsp;link), then&nbsp;the&nbsp;first project; projects further down and&nbsp;the&nbsp;footer play it&nbsp;once as&nbsp;they scroll in.
-//&nbsp;Carousels fade up&nbsp;without blur (blurring big&nbsp;images and&nbsp;videos is&nbsp;expensive and&nbsp;looks muddy).
+// Entrance motion for the home page (inlined here, not a separate file: on slow connections a deferred download
+// kept the hero hidden for seconds), modelled on the linear.app hero (measured frame by frame, Nov 2026):
+// every visual line of the hero fades in from opacity 0 + blur(10px) + translateY(20% of its height) over ~1 s with an
+// ease-out-quad curve, the lines 100 ms apart. Here the same motion runs on the hero copy (line by line), the right-hand
+// menu (link by link), then the first project; projects further down and the footer play it once as they scroll in.
+// Carousels fade up without blur (blurring big images and videos is expensive and looks muddy).
 //
-// The&nbsp;hidden state is&nbsp;CSS (`.anim … :not(.r-in) { opacity: 0&nbsp;}`); <html>.anim is&nbsp;set&nbsp;by&nbsp;an&nbsp;inline script&nbsp;in <head>, so
-//&nbsp;nothing flashes before this&nbsp;file runs. Adding `.r-in`&nbsp;and&nbsp;starting a&nbsp;WAAPI animation with&nbsp;fill:'backwards' in&nbsp;the&nbsp;same
-// frame hands the&nbsp;element over&nbsp;from&nbsp;CSS to&nbsp;the&nbsp;animation without a&nbsp;gap. Animations leave nothing behind when&nbsp;they end
-//&nbsp;(no&nbsp;lingering transform / filter / will-change), so&nbsp;text stays crisp and&nbsp;hover styles keep working.
-(()&nbsp;=> {
+// The hidden state is CSS (`.anim … :not(.r-in) { opacity: 0 }`); <html>.anim is set by an inline script in <head>, so
+// nothing flashes before this file runs. Adding `.r-in` and starting a WAAPI animation with fill:'backwards' in the same
+// frame hands the element over from CSS to the animation without a gap. Animations leave nothing behind when they end
+// (no lingering transform / filter / will-change), so text stays crisp and hover styles keep working.
+(() => {
   const root = document.documentElement;
   if (!root.classList.contains('anim')) return;
   window.__motion = 1;
 
-&nbsp; const EASE = 'cubic-bezier(0.25, 0.46,&nbsp;0.45,&nbsp;0.94)'; // ease-out-quad, as&nbsp;on&nbsp;linear.app
+  const EASE = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'; // ease-out-quad, as on linear.app
   const DUR_TEXT = 1000;
   const DUR_MEDIA = 1100;
   const STEP = 100;            // stagger between lines
   const STEP_SLIDE = 80;       // stagger between carousel slides
-  const MAX_SPREAD = 600;      // long hero (mobile, ~9&nbsp;lines) is&nbsp;compressed so&nbsp;the&nbsp;last line starts by&nbsp;600&nbsp;ms
+  const MAX_SPREAD = 600;      // long hero (mobile, ~9 lines) is compressed so the last line starts by 600 ms
 
-&nbsp; const reveal = (el,&nbsp;{ delay = 0,&nbsp;blur = 10,&nbsp;shift = '20%',&nbsp;dur&nbsp;= DUR_TEXT } = {})&nbsp;=> {
+  const reveal = (el, { delay = 0, blur = 10, shift = '20%', dur = DUR_TEXT } = {}) => {
     el.classList.add('r-in');
-    const from&nbsp;= { opacity: 0,&nbsp;transform: `translateY(${shift})` };
-    const to&nbsp;= { opacity: 1,&nbsp;transform: 'translateY(0)' };
-    if&nbsp;(blur) { from.filter = `blur(${blur}px)`; to.filter = 'blur(0px)'; }
-    return el.animate([from, to],&nbsp;{ duration: dur,&nbsp;delay, easing: EASE, fill: 'backwards' });
+    const from = { opacity: 0, transform: `translateY(${shift})` };
+    const to = { opacity: 1, transform: 'translateY(0)' };
+    if (blur) { from.filter = `blur(${blur}px)`; to.filter = 'blur(0px)'; }
+    return el.animate([from, to], { duration: dur, delay, easing: EASE, fill: 'backwards' });
   };
-  const show = (el)&nbsp;=> el.classList.add('r-in');
-  const stepFor = (n)&nbsp;=> (n > 1&nbsp;? Math.min(STEP, MAX_SPREAD / (n&nbsp;- 1))&nbsp;: 0);
+  const show = (el) => el.classList.add('r-in');
+  const stepFor = (n) => (n > 1 ? Math.min(STEP, MAX_SPREAD / (n - 1)) : 0);
 
-&nbsp; // ── Hero: split each paragraph into&nbsp;its&nbsp;visual lines (only for&nbsp;the&nbsp;duration of&nbsp;the&nbsp;animation) ─────────────────────
-  // Lines are&nbsp;found by&nbsp;measuring every character's position, so&nbsp;breaks match the&nbsp;real layout exactly (non-breaking
-  // spaces, hyphens, text-indent included). Each line becomes a&nbsp;block-level, no-wrap span; when&nbsp;the&nbsp;animation is&nbsp;over
-&nbsp; // the&nbsp;paragraph's original markup is&nbsp;put&nbsp;back, so&nbsp;resizing and&nbsp;text selection behave as&nbsp;normal afterwards.
-  const splitLines = (p)&nbsp;=> {
+  // ── Hero: split each paragraph into its visual lines (only for the duration of the animation) ─────────────────────
+  // Lines are found by measuring every character's position, so breaks match the real layout exactly (non-breaking
+  // spaces, hyphens, text-indent included). Each line becomes a block-level, no-wrap span; when the animation is over
+  // the paragraph's original markup is put back, so resizing and text selection behave as normal afterwards.
+  const splitLines = (p) => {
     const node = p.firstChild;
-    if&nbsp;(!node || node.nodeType !== 3&nbsp;|| p.childNodes.length !== 1)&nbsp;return null; // plain-text paragraphs only
+    if (!node || node.nodeType !== 3 || p.childNodes.length !== 1) return null; // plain-text paragraphs only
     const text = node.nodeValue, range = document.createRange();
     const lines = [];
-    let&nbsp;top&nbsp;= null, start = 0;
-&nbsp;   for&nbsp;(let&nbsp;i&nbsp;= 0;&nbsp;i < text.length; i++)&nbsp;{
-      if&nbsp;(/\s/.test(text[i]) && text[i] !== ' ') continue;           // collapsible spaces have no&nbsp;reliable box
-&nbsp;     range.setStart(node, i);&nbsp;range.setEnd(node, i&nbsp;+ 1);
-&nbsp;     const r&nbsp;= range.getClientRects()[0];
-      if&nbsp;(!r)&nbsp;continue;
-      if&nbsp;(top&nbsp;=== null) top&nbsp;= r.top;
-      else if&nbsp;(r.top -&nbsp;top > r.height / 2)&nbsp;{ lines.push(text.slice(start, i));&nbsp;start = i;&nbsp;top&nbsp;= r.top; }
+    let top = null, start = 0;
+    for (let i = 0; i < text.length; i++) {
+      if (/\s/.test(text[i]) && text[i] !== ' ') continue;           // collapsible spaces have no reliable box
+      range.setStart(node, i); range.setEnd(node, i + 1);
+      const r = range.getClientRects()[0];
+      if (!r) continue;
+      if (top === null) top = r.top;
+      else if (r.top - top > r.height / 2) { lines.push(text.slice(start, i)); start = i; top = r.top; }
     }
     lines.push(text.slice(start));
     const html = p.innerHTML;
     p.textContent = '';
-    const spans = lines.map((t)&nbsp;=> {
-      const s&nbsp;= document.createElement('span');
+    const spans = lines.map((t) => {
+      const s = document.createElement('span');
       s.className = 'ln';
       s.textContent = t;
-&nbsp;     p.appendChild(s);
+      p.appendChild(s);
       return s;
-&nbsp;   });
-    return { spans, restore: ()&nbsp;=> { p.innerHTML = html; } };
+    });
+    return { spans, restore: () => { p.innerHTML = html; } };
   };
 
-  const playHero = ()&nbsp;=> {
+  const playHero = () => {
     const paras = [...document.querySelectorAll('.intro__text p')];
-&nbsp;   const items = [];      // { el,&nbsp;split? } in&nbsp;reading order
+    const items = [];      // { el, split? } in reading order
     const restores = [];
-    paras.forEach((p)&nbsp;=> {
-      const sp&nbsp;= splitLines(p);
-      if&nbsp;(sp)&nbsp;{ restores.push(sp.restore); sp.spans.forEach((s)&nbsp;=> items.push(s)); show(p); }
+    paras.forEach((p) => {
+      const sp = splitLines(p);
+      if (sp) { restores.push(sp.restore); sp.spans.forEach((s) => items.push(s)); show(p); }
       else items.push(p);
     });
     const step = stepFor(items.length);
-    const anims = items.map((el, i)&nbsp;=> reveal(el, { delay: i&nbsp;* step }));
+    const anims = items.map((el, i) => reveal(el, { delay: i * step }));
 
-    // Menu, link by&nbsp;link on&nbsp;the&nbsp;same rhythm: beside the&nbsp;copy (desktop) it&nbsp;starts a&nbsp;beat after the&nbsp;first line; stacked
-    // under it&nbsp;(tablet, mobile) it&nbsp;follows the&nbsp;last line.
-    const nav&nbsp;= document.querySelector('.intro__links'), txt&nbsp;= document.querySelector('.intro__text');
-    const below = nav&nbsp;&& txt&nbsp;&& nav.getBoundingClientRect().top >= txt.getBoundingClientRect().bottom - 1;
-&nbsp;   const navStart = below ? (items.length - 1)&nbsp;* step + STEP : STEP;
-    document.querySelectorAll('.intro__links a').forEach((a, i)&nbsp;=> anims.push(reveal(a, { delay: navStart + i&nbsp;* STEP })));
+    // Menu, link by link on the same rhythm: beside the copy (desktop) it starts a beat after the first line; stacked
+    // under it (tablet, mobile) it follows the last line.
+    const nav = document.querySelector('.intro__links'), txt = document.querySelector('.intro__text');
+    const below = nav && txt && nav.getBoundingClientRect().top >= txt.getBoundingClientRect().bottom - 1;
+    const navStart = below ? (items.length - 1) * step + STEP : STEP;
+    document.querySelectorAll('.intro__links a').forEach((a, i) => anims.push(reveal(a, { delay: navStart + i * STEP })));
 
-    // Put&nbsp;the&nbsp;paragraphs back together once every hero line has&nbsp;landed (or&nbsp;straight away if&nbsp;the&nbsp;layout changes).
-    let&nbsp;restored = false;
-    const restore = ()&nbsp;=> {
-      if&nbsp;(restored) return; restored = true;
-      anims.forEach((a)&nbsp;=> { try&nbsp;{ a.finish(); } catch (e)&nbsp;{} });
-      restores.forEach((r)&nbsp;=> r());
-&nbsp;     removeEventListener('resize', restore);
+    // Put the paragraphs back together once every hero line has landed (or straight away if the layout changes).
+    let restored = false;
+    const restore = () => {
+      if (restored) return; restored = true;
+      anims.forEach((a) => { try { a.finish(); } catch (e) {} });
+      restores.forEach((r) => r());
+      removeEventListener('resize', restore);
     };
-    Promise.all(anims.map((a)&nbsp;=> a.finished)).then(restore, restore);
+    Promise.all(anims.map((a) => a.finished)).then(restore, restore);
     addEventListener('resize', restore);
-    return below ? navStart + 2&nbsp;* STEP : (items.length - 1)&nbsp;* step;   // when&nbsp;the&nbsp;last hero element starts
+    return below ? navStart + 2 * STEP : (items.length - 1) * step;   // when the last hero element starts
   };
 
-  // ── Projects: header (blur, like the&nbsp;hero) then&nbsp;slides fading up&nbsp;one&nbsp;after another ─────────────────────────────────
-  // Slides never fade in&nbsp;empty: they wait until the&nbsp;pictures they show are&nbsp;downloaded AND decoded, so&nbsp;they arrive
-  // complete. If&nbsp;that&nbsp;takes longer than&nbsp;`cap`&nbsp;ms&nbsp;(slow connection) they come in&nbsp;anyway and&nbsp;fill in&nbsp;as&nbsp;usual.
-  const settled = (p)&nbsp;=> p.then(() => {}, ()&nbsp;=> {});
-  const imgReady = (img)&nbsp;=> settled(img.decode ? img.decode() : (img.complete ? Promise.resolve() : new&nbsp;Promise((r) => { img.onload = img.onerror = r;&nbsp;})));
-  const mediaReady = (slides)&nbsp;=> {
+  // ── Projects: header (blur, like the hero) then slides fading up one after another ─────────────────────────────────
+  // Slides never fade in empty: they wait until the pictures they show are downloaded AND decoded, so they arrive
+  // complete. If that takes longer than `cap` ms (slow connection) they come in anyway and fill in as usual.
+  const settled = (p) => p.then(() => {}, () => {});
+  const imgReady = (img) => settled(img.decode ? img.decode() : (img.complete ? Promise.resolve() : new Promise((r) => { img.onload = img.onerror = r; })));
+  const mediaReady = (slides) => {
     const waits = [];
-    slides.forEach((sl)&nbsp;=> {
-      sl.querySelectorAll('img').forEach((img)&nbsp;=> waits.push(imgReady(img)));
-      sl.querySelectorAll('video').forEach((v)&nbsp;=> {
-        const src&nbsp;= v.getAttribute('poster') || v.dataset.poster;
-        if&nbsp;(src)&nbsp;{ const i&nbsp;= new&nbsp;Image(); i.src = src; waits.push(imgReady(i)); }
+    slides.forEach((sl) => {
+      sl.querySelectorAll('img').forEach((img) => waits.push(imgReady(img)));
+      sl.querySelectorAll('video').forEach((v) => {
+        const src = v.getAttribute('poster') || v.dataset.poster;
+        if (src) { const i = new Image(); i.src = src; waits.push(imgReady(i)); }
       });
     });
     return Promise.all(waits);
   };
 
-  const playProject = (sec,&nbsp;delay, cap)&nbsp;=> {
+  const playProject = (sec, delay, cap) => {
     const t0 = performance.now();
     const head = sec.querySelector('.phead');
-    if&nbsp;(head) reveal(head, { delay, blur: 8,&nbsp;shift: '10px' });   // text needs nothing but&nbsp;the&nbsp;font: on&nbsp;schedule
+    if (head) reveal(head, { delay, blur: 8, shift: '10px' });   // text needs nothing but the font: on schedule
     const rail = sec.querySelector('.carousel');
     const edge = rail ? rail.getBoundingClientRect().right : innerWidth;
     const onScreen = [];
-    [...sec.querySelectorAll('.slide')].forEach((s)&nbsp;=> {
-      // only slides that&nbsp;are&nbsp;actually on&nbsp;screen animate; the&nbsp;rest are&nbsp;simply shown
-      if&nbsp;(s.getBoundingClientRect().left < edge &&&nbsp;onScreen.length < 6)&nbsp;onScreen.push(s); else show(s);
+    [...sec.querySelectorAll('.slide')].forEach((s) => {
+      // only slides that are actually on screen animate; the rest are simply shown
+      if (s.getBoundingClientRect().left < edge && onScreen.length < 6) onScreen.push(s); else show(s);
     });
-    Promise.race([mediaReady(onScreen), new&nbsp;Promise((r) => setTimeout(r, cap))]).then(()&nbsp;=> {
+    Promise.race([mediaReady(onScreen), new Promise((r) => setTimeout(r, cap))]).then(() => {
       const late = performance.now() - t0;                        // time already spent waiting
-      const base = Math.max(0, delay + 120&nbsp;- late);
-      onScreen.forEach((s, k)&nbsp;=> reveal(s, { delay: base + k&nbsp;* STEP_SLIDE, blur: 0,&nbsp;shift: '24px', dur: DUR_MEDIA }));
+      const base = Math.max(0, delay + 120 - late);
+      onScreen.forEach((s, k) => reveal(s, { delay: base + k * STEP_SLIDE, blur: 0, shift: '24px', dur: DUR_MEDIA }));
     });
   };
 
-  const playFooter = (footer)&nbsp;=> {
-    footer.querySelectorAll('.footer__links a').forEach((a, i)&nbsp;=> reveal(a, { delay: i&nbsp;* STEP }));
+  const playFooter = (footer) => {
+    footer.querySelectorAll('.footer__links a').forEach((a, i) => reveal(a, { delay: i * STEP }));
     const copy = footer.querySelector('.footer__copy');
-    if&nbsp;(copy) reveal(copy, { delay: 200,&nbsp;blur: 6,&nbsp;shift: '6px' });
+    if (copy) reveal(copy, { delay: 200, blur: 6, shift: '6px' });
   };
 
   // ── Sequence ──────────────────────────────────────────────────────────────────────────────────────────────────────
-  const start = ()&nbsp;=> {
+  const start = () => {
     const lastHeroLine = playHero();
 
-    // Anything below the&nbsp;hero: in&nbsp;the&nbsp;first screen it&nbsp;follows the&nbsp;hero; further down it&nbsp;plays when&nbsp;scrolled into&nbsp;view.
-    const vh&nbsp;= innerHeight;
+    // Anything below the hero: in the first screen it follows the hero; further down it plays when scrolled into view.
+    const vh = innerHeight;
     const later = [];
-    let&nbsp;firstScreen = 0;
-&nbsp;   document.querySelectorAll('.project').forEach((sec)&nbsp;=> {
-      const top&nbsp;= sec.getBoundingClientRect().top;
-      if&nbsp;(top < vh&nbsp;* 0.92&nbsp;&& sec.getBoundingClientRect().bottom > 0)&nbsp;playProject(sec, lastHeroLine + 200&nbsp;+ firstScreen++ * 150,&nbsp;3000);
+    let firstScreen = 0;
+    document.querySelectorAll('.project').forEach((sec) => {
+      const top = sec.getBoundingClientRect().top;
+      if (top < vh * 0.92 && sec.getBoundingClientRect().bottom > 0) playProject(sec, lastHeroLine + 200 + firstScreen++ * 150, 3000);
       else later.push(sec);
     });
     const footer = document.querySelector('.footer');
-    if&nbsp;(footer) later.push(footer);
+    if (footer) later.push(footer);
 
-    if (!('IntersectionObserver' in&nbsp;window)) { later.forEach((el)&nbsp;=> el.querySelectorAll('.phead, .slide, .footer__links a,&nbsp;.footer__copy').forEach(show)); return; }
-    const io&nbsp;= new IntersectionObserver((entries)&nbsp;=> entries.forEach((e) => {
-      if&nbsp;(!e.isIntersecting) return;
+    if (!('IntersectionObserver' in window)) { later.forEach((el) => el.querySelectorAll('.phead, .slide, .footer__links a, .footer__copy').forEach(show)); return; }
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
       io.unobserve(e.target);
-      const el&nbsp;= e.target;
-      // Scrolled past already (e.g. a&nbsp;jump to&nbsp;the&nbsp;bottom): show it&nbsp;without animation.
-      if&nbsp;(e.boundingClientRect.bottom < 0)&nbsp;{ el.querySelectorAll('.phead, .slide, .footer__links a,&nbsp;.footer__copy').forEach(show); return; }
-      if (el.classList.contains('footer')) playFooter(el); else playProject(el, 0,&nbsp;1200);
-    }), { rootMargin: '0px 0px -12%&nbsp;0px' });
-    later.forEach((el)&nbsp;=> io.observe(el));
+      const el = e.target;
+      // Scrolled past already (e.g. a jump to the bottom): show it without animation.
+      if (e.boundingClientRect.bottom < 0) { el.querySelectorAll('.phead, .slide, .footer__links a, .footer__copy').forEach(show); return; }
+      if (el.classList.contains('footer')) playFooter(el); else playProject(el, 0, 1200);
+    }), { rootMargin: '0px 0px -12% 0px' });
+    later.forEach((el) => io.observe(el));
   };
 
-  // Lines must be&nbsp;measured in&nbsp;the&nbsp;final font, so&nbsp;wait for&nbsp;it&nbsp;(it&nbsp;is&nbsp;preloaded; give up&nbsp;after 1.2&nbsp;s&nbsp;and&nbsp;use&nbsp;whatever is
-&nbsp; // there). In&nbsp;a&nbsp;background tab,&nbsp;wait until the&nbsp;page is&nbsp;actually seen.
+  // Lines must be measured in the final font, so wait for it (it is preloaded; give up after 1.2 s and use whatever is
+  // there). In a background tab, wait until the page is actually seen.
   const fontReady = document.fonts && document.fonts.load
-    ? Promise.race([document.fonts.load('400 33px "ALS Hauss"'), new&nbsp;Promise((r) => setTimeout(r, 1200))])
+    ? Promise.race([document.fonts.load('400 33px "ALS Hauss"'), new Promise((r) => setTimeout(r, 1200))])
     : Promise.resolve();
-  const whenVisible = ()&nbsp;=> new&nbsp;Promise((r) => {
-    if&nbsp;(!document.hidden) return r();
-&nbsp;   const on&nbsp;= ()&nbsp;=> { if&nbsp;(!document.hidden) { document.removeEventListener('visibilitychange', on); r();&nbsp;} };
+  const whenVisible = () => new Promise((r) => {
+    if (!document.hidden) return r();
+    const on = () => { if (!document.hidden) { document.removeEventListener('visibilitychange', on); r(); } };
     document.addEventListener('visibilitychange', on);
   });
-  fontReady.then(whenVisible).then(()&nbsp;=> requestAnimationFrame(start)).catch(() => root.classList.remove('anim'));
+  fontReady.then(whenVisible).then(() => requestAnimationFrame(start)).catch(() => root.classList.remove('anim'));
 })();
 </script>
 <script src="/analytics.js?v=9492ce8f" defer></script>

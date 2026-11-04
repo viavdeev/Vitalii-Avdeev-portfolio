@@ -207,3 +207,10 @@
 
 /* ═════════ WB Club: cover plate colour ═════════ */
 .case--wb .hero--wb { aspect-ratio: 1280 / 854.07; background: #e7a3d6; }
+
+/* ═════════ Entrance motion (first screen only; inline script at the end of each case page) ═════════ */
+.anim .cintro .h1:not(.r-in),
+.anim .cintro .meta > div:not(.r-in),
+.anim .cintro > .hero:not(.r-in) { opacity: 0; }
+.cintro .h1 .ln { display: block; white-space: nowrap; }
+@media print { .anim * { opacity: 1 !important; } }
