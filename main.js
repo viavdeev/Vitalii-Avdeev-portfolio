@@ -146,7 +146,9 @@ afterFirst.then(() => {
     const opts = v.dataset.srcs.split(',').map((o) => { const i = o.indexOf(':'); return [+o.slice(0, i), o.slice(i + 1)]; });
     v.src = (opts.find(([w]) => w >= need) || opts[opts.length - 1])[1];
     const on = () => v.classList.add('is-on');
-    if ('requestVideoFrameCallback' in v) v.requestVideoFrameCallback(on); else v.addEventListener('playing', on, { once: true });
+    if ('requestVideoFrameCallback' in v) v.requestVideoFrameCallback(on);
+    v.addEventListener('playing', on, { once: true });   // whichever comes first (Safari may not report frames)
+    v.addEventListener('timeupdate', () => { if (v.currentTime > 0) on(); }, { once: true });
   });
   const imgs = [...document.querySelectorAll('img[loading="lazy"]')];
   imgs.forEach((img) => { img.loading = 'eager'; });
