@@ -136,20 +136,6 @@ const afterFirst = new Promise((resolve) => {
 });
 window.__afterFirst = afterFirst;
 afterFirst.then(() => {
-  // The hero loop (slide 1) is the first thing on screen, so it goes first: it is fetched as soon as the first-screen images are in,
-  // before the rest of the slides. It sits on top of the static slide image (frame 0 of the video is that image) and fades in once
-  // its first frame is on screen. Skipped for Save-Data and reduced motion, where the static image simply stays.
-  document.querySelectorAll('video[data-hero]').forEach((v) => {
-    const c = navigator.connection;
-    if ((c && c.saveData) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-    const need = v.getBoundingClientRect().width * Math.min(window.devicePixelRatio || 1, 3);   // device pixels the video is shown at
-    const opts = v.dataset.srcs.split(',').map((o) => { const i = o.indexOf(':'); return [+o.slice(0, i), o.slice(i + 1)]; });
-    v.src = (opts.find(([w]) => w >= need) || opts[opts.length - 1])[1];
-    const on = () => v.classList.add('is-on');
-    if ('requestVideoFrameCallback' in v) v.requestVideoFrameCallback(on);
-    v.addEventListener('playing', on, { once: true });   // whichever comes first (Safari may not report frames)
-    v.addEventListener('timeupdate', () => { if (v.currentTime > 0) on(); }, { once: true });
-  });
   const imgs = [...document.querySelectorAll('img[loading="lazy"]')];
   imgs.forEach((img) => { img.loading = 'eager'; });
   document.querySelectorAll('video[data-poster]').forEach((v) => { v.poster = v.dataset.poster; });
