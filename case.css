@@ -142,6 +142,7 @@
 }
 .sec__title { display: flex; flex-direction: column; gap: 10px; }
 .sec__text { display: flex; flex-direction: column; gap: 8px; }
+.sec__mid { width: min(560px, 100%); align-self: center; }   /* a text block between figures: same 560 column as the head */
 .sec__text p { font-size: 15px; line-height: 23.5px; letter-spacing: -0.017em; }   /* 15 / 23.5, −0.255px */
 
 /* figures */
