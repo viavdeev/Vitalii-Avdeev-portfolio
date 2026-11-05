@@ -207,6 +207,9 @@
 
 /* ═════════ WB Club: cover plate colour ═════════ */
 .case--wb .hero--wb { aspect-ratio: 1280 / 854.07; background: #e7a3d6; }
+/* WB cover loop: sits on the cover image (= its frame 0), shown by case.js once its first frame is on screen. Not 0: Safari doesn't present fully transparent videos */
+.hero > .hero-vid { opacity: 0.001; }
+.hero > .hero-vid.is-on { opacity: 1; }
 
 /* ═════════ Entrance motion (first screen only; inline script at the end of each case page) ═════════ */
 .anim .cintro .h1:not(.r-in),
