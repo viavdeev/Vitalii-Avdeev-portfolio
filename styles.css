@@ -171,6 +171,8 @@ img { display: block; }
 .stage--end { flex-direction: column; justify-content: flex-end; }
 .stage img, .stage video { -webkit-user-drag: none; user-select: none; }
 .box  { position: relative; flex: none; }
+.hero-vid { opacity: 0; }                    /* slide-1 hero loop: shown by main.js once its first frame is on screen */
+.hero-vid.is-on { opacity: 1; }
 .abs  { position: absolute; }
 .crop { overflow: hidden; }
 .crop > img, .crop > video { position: absolute; max-width: none; }
