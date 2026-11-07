@@ -223,7 +223,7 @@
    7 notes: 4 + 3 on desktop (second row centred), 3 per row on tablet, 2 on mobile. Colours: tints of the WB Club palette
    (violet, magenta, the Club gradient's pink and orange). Paper = flat tint with a faint top-light and a slight tilt; the folded
    corner sits right, left or nowhere (clip-path cut + ::after flap); the soft shadow follows the cut (filter on the li).
-   Each note has its own hover: it straightens, tips the other way or lifts, by a few px / degrees. */
+   Each note has its own hover: it straightens or tips the other way while lifting a few px (no zoom, no shadow change). */
 .cnotes { display: flex; flex-direction: column; align-items: center; gap: calc(28px + var(--f) * 12 / 354);
   margin-top: calc(48px + var(--f) * 12 / 354 - var(--gap)); }          /* same distance from "My role" as between text blocks */
 .cnotes > .h2 { width: min(560px, 100%); }
@@ -231,7 +231,7 @@
   list-style: none; margin: 0; padding: 0; width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--ng) + 6px) var(--ng); }
 .note {
   --c: #e4d5ff; --tilt: 0deg; --fold: 20px;
-  --h-rot: 0deg; --h-y: -4px; --h-s: 1;
+  --h-rot: 0deg; --h-y: -4px;
   position: relative; box-sizing: border-box; width: var(--nw); min-height: 150px;
   display: flex; flex-direction: column; gap: 5px;
   padding: 14px 14px 22px;
@@ -244,11 +244,11 @@
 /* folded corner, bottom right */
 .note.fr { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold)), calc(100% - var(--fold)) 100%, 0 100%); }
 .note.fr::after { content: ""; right: 0;
-  background: linear-gradient(315deg, transparent 50%, color-mix(in srgb, var(--c) 70%, #3b2350) 50%, color-mix(in srgb, var(--c) 86%, #fff) 100%); }
+  background: linear-gradient(315deg, transparent 50%, color-mix(in srgb, var(--c) 86%, #4a3a58) 50%, color-mix(in srgb, var(--c) 70%, #fff) 100%); }
 /* folded corner, bottom left */
 .note.fl { clip-path: polygon(0 0, 100% 0, 100% 100%, var(--fold) 100%, 0 calc(100% - var(--fold))); }
 .note.fl::after { content: ""; left: 0;
-  background: linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--c) 70%, #3b2350) 50%, color-mix(in srgb, var(--c) 86%, #fff) 100%); }
+  background: linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--c) 86%, #4a3a58) 50%, color-mix(in srgb, var(--c) 70%, #fff) 100%); }
 
 .note__k { font-size: 12px; line-height: 15px; font-weight: 500; color: rgb(36 36 41 / .7); letter-spacing: 0; }
 .note__t { font-size: 15px; line-height: 18px; font-weight: 600; letter-spacing: -0.012em; text-wrap: balance; }
@@ -258,10 +258,10 @@
 .note--1 { --c: #e3d2ff; --tilt: -1.6deg; --h-rot: 0.4deg;  --h-y: -5px; }          /* violet */
 .note--2 { --c: #f9c9ec; --tilt: 1.1deg;  --h-rot: 2.2deg;  --h-y: -3px; }          /* magenta pink */
 .note--3 { --c: #ffd9b0; --tilt: -0.6deg; --h-rot: -2deg;   --h-y: -4px; }          /* Club orange */
-.note--4 { --c: #d4c4ff; --tilt: 1.5deg;  --h-rot: 0deg;    --h-y: -2px; --h-s: 1.035; }   /* deeper violet */
+.note--4 { --c: #d4c4ff; --tilt: 1.5deg;  --h-rot: -1deg;   --h-y: -4px; }   /* deeper violet */
 .note--5 { --c: #fbd0dc; --tilt: -1.1deg; --h-rot: -2.6deg; --h-y: -5px; }          /* Club pink */
 .note--6 { --c: #ecc4f7; --tilt: 0.8deg;  --h-rot: -0.6deg; --h-y: -6px; }          /* orchid */
-.note--7 { --c: #ffe7c2; --tilt: -1.4deg; --h-rot: 0.8deg;  --h-y: -3px; --h-s: 1.03; }    /* light amber */
+.note--7 { --c: #ffe7c2; --tilt: -1.4deg; --h-rot: 0.8deg;  --h-y: -5px; }    /* light amber */
 
 @media (min-width: 744px) {
   .notes { --nw: min(232px, (100% - 2 * var(--ng)) / 3); }
@@ -274,7 +274,6 @@
   .notes { --nw: 236px; --ng: 28px; }   /* 4 + 3, row of four = 1028px */
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .note { transition: transform .4s cubic-bezier(.2, .7, .2, 1), filter .4s ease; }
-  .note:hover { transform: rotate(var(--h-rot)) translateY(var(--h-y)) scale(var(--h-s));
-    filter: drop-shadow(0 2px 2px rgb(36 20 60 / .10)) drop-shadow(0 16px 22px rgb(36 20 60 / .14)); }
+  .note { transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+  .note:hover { transform: rotate(var(--h-rot)) translateY(var(--h-y)); }   /* tilt + lift only: no zoom, the shadow stays as it is */
 }
