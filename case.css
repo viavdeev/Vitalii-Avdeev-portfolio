@@ -218,3 +218,55 @@
 .anim .cintro > .hero:not(.r-in) { opacity: 0; }
 .cintro .h1 .ln { display: block; white-space: nowrap; }
 @media print { .anim * { opacity: 1 !important; } }
+
+/* ═════════ Achievements as sticky notes (WB Club) ═════════
+   7 notes: 4 + 3 on desktop (second row centred), 2 per row on mobile. Paper = flat pastel with a faint top-light, a slight
+   tilt, a folded bottom corner (clip-path cut + ::after flap) and a soft drop shadow that follows the cut (filter on the li). */
+.cnotes { display: flex; flex-direction: column; align-items: center; gap: calc(28px + var(--f) * 12 / 354);
+  margin-top: calc(48px + var(--f) * 12 / 354 - var(--gap)); }          /* same distance from "My role" as between text blocks */
+.cnotes > .h2 { width: min(560px, 100%); }
+.notes { --ng: calc(12px + var(--f) * 20 / 354); --nw: calc((100% - var(--ng)) / 2);
+  list-style: none; margin: 0; padding: 0; width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--ng) + 4px) var(--ng); }
+.note {
+  --c: #f6d77a; --tilt: 0deg; --fold: 22px;
+  position: relative; box-sizing: border-box; width: var(--nw); min-height: 168px;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 16px 14px 26px;
+  color: #16171a;
+  background: linear-gradient(180deg, rgb(255 255 255 / .18), rgb(255 255 255 / 0) 38%), var(--c);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold)), calc(100% - var(--fold)) 100%, 0 100%);
+  transform: rotate(var(--tilt));
+  filter: drop-shadow(0 1px 1px rgb(22 23 26 / .10)) drop-shadow(0 8px 14px rgb(22 23 26 / .10));
+}
+/* the folded corner: a triangle in a darker shade of the note, lit from the fold line */
+.note::after { content: ""; position: absolute; right: 0; bottom: 0; width: var(--fold); height: var(--fold);
+  background: linear-gradient(315deg, transparent 50%, color-mix(in srgb, var(--c) 72%, #3a2f40) 50%, color-mix(in srgb, var(--c) 88%, #fff) 100%); }
+.note__k { font-size: 12px; line-height: 15px; font-weight: 500; color: rgb(22 23 26 / .72); letter-spacing: 0; }
+.note__t { font-size: 16px; line-height: 19px; font-weight: 600; letter-spacing: -0.012em; text-wrap: balance; }
+.note__b { font-size: 13px; line-height: 18px; color: rgb(22 23 26 / .8); letter-spacing: 0; }
+
+/* colours + tilt, one per note */
+.note--1 { --c: #f7d774; --tilt: -1.6deg; }
+.note--2 { --c: #9fd2f2; --tilt: 1.1deg; }
+.note--3 { --c: #f4a99a; --tilt: -0.6deg; }
+.note--4 { --c: #c3c0ec; --tilt: 1.5deg; }
+.note--5 { --c: #a5dcb3; --tilt: -1.1deg; }
+.note--6 { --c: #f5b6d6; --tilt: 0.8deg; }
+.note--7 { --c: #f8c99a; --tilt: -1.4deg; }
+
+@media (min-width: 744px) {
+  .notes { --nw: calc((100% - 2 * var(--ng)) / 3); }
+  .note { min-height: 212px; padding: 20px 18px 30px; gap: 8px; --fold: 26px; }
+  .note__k { font-size: 13px; line-height: 16px; }
+  .note__t { font-size: 19px; line-height: 23px; }
+  .note__b { font-size: 14px; line-height: 20px; }
+}
+@media (min-width: 1100px) {
+  .notes { --nw: calc((100% - 3 * var(--ng)) / 4); }   /* 4 + 3 */
+  .note { aspect-ratio: 1 / 0.86; min-height: 0; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .note { transition: transform .35s cubic-bezier(.2, .7, .2, 1), filter .35s ease; }
+  .note:hover { transform: rotate(0deg) translateY(-4px);
+    filter: drop-shadow(0 2px 2px rgb(22 23 26 / .10)) drop-shadow(0 16px 24px rgb(22 23 26 / .14)); }
+}
