@@ -220,53 +220,61 @@
 @media print { .anim * { opacity: 1 !important; } }
 
 /* ═════════ Achievements as sticky notes (WB Club) ═════════
-   7 notes: 4 + 3 on desktop (second row centred), 2 per row on mobile. Paper = flat pastel with a faint top-light, a slight
-   tilt, a folded bottom corner (clip-path cut + ::after flap) and a soft drop shadow that follows the cut (filter on the li). */
+   7 notes: 4 + 3 on desktop (second row centred), 3 per row on tablet, 2 on mobile. Colours: tints of the WB Club palette
+   (violet, magenta, the Club gradient's pink and orange). Paper = flat tint with a faint top-light and a slight tilt; the folded
+   corner sits right, left or nowhere (clip-path cut + ::after flap); the soft shadow follows the cut (filter on the li).
+   Each note has its own hover: it straightens, tips the other way or lifts, by a few px / degrees. */
 .cnotes { display: flex; flex-direction: column; align-items: center; gap: calc(28px + var(--f) * 12 / 354);
   margin-top: calc(48px + var(--f) * 12 / 354 - var(--gap)); }          /* same distance from "My role" as between text blocks */
 .cnotes > .h2 { width: min(560px, 100%); }
-.notes { --ng: calc(12px + var(--f) * 20 / 354); --nw: calc((100% - var(--ng)) / 2);
-  list-style: none; margin: 0; padding: 0; width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--ng) + 4px) var(--ng); }
+.notes { --ng: calc(12px + var(--f) * 16 / 354); --nw: calc((100% - var(--ng)) / 2);
+  list-style: none; margin: 0; padding: 0; width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--ng) + 6px) var(--ng); }
 .note {
-  --c: #f6d77a; --tilt: 0deg; --fold: 22px;
-  position: relative; box-sizing: border-box; width: var(--nw); min-height: 168px;
-  display: flex; flex-direction: column; gap: 6px;
-  padding: 16px 14px 26px;
-  color: #16171a;
-  background: linear-gradient(180deg, rgb(255 255 255 / .18), rgb(255 255 255 / 0) 38%), var(--c);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold)), calc(100% - var(--fold)) 100%, 0 100%);
+  --c: #e4d5ff; --tilt: 0deg; --fold: 20px;
+  --h-rot: 0deg; --h-y: -4px; --h-s: 1;
+  position: relative; box-sizing: border-box; width: var(--nw); min-height: 150px;
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 14px 14px 22px;
+  color: #242429;
+  background: linear-gradient(180deg, rgb(255 255 255 / .22), rgb(255 255 255 / 0) 40%), var(--c);
   transform: rotate(var(--tilt));
-  filter: drop-shadow(0 1px 1px rgb(22 23 26 / .10)) drop-shadow(0 8px 14px rgb(22 23 26 / .10));
+  filter: drop-shadow(0 1px 1px rgb(36 20 60 / .10)) drop-shadow(0 7px 12px rgb(36 20 60 / .10));
 }
-/* the folded corner: a triangle in a darker shade of the note, lit from the fold line */
-.note::after { content: ""; position: absolute; right: 0; bottom: 0; width: var(--fold); height: var(--fold);
-  background: linear-gradient(315deg, transparent 50%, color-mix(in srgb, var(--c) 72%, #3a2f40) 50%, color-mix(in srgb, var(--c) 88%, #fff) 100%); }
-.note__k { font-size: 12px; line-height: 15px; font-weight: 500; color: rgb(22 23 26 / .72); letter-spacing: 0; }
-.note__t { font-size: 16px; line-height: 19px; font-weight: 600; letter-spacing: -0.012em; text-wrap: balance; }
-.note__b { font-size: 13px; line-height: 18px; color: rgb(22 23 26 / .8); letter-spacing: 0; }
+.note::after { content: none; position: absolute; bottom: 0; width: var(--fold); height: var(--fold); }
+/* folded corner, bottom right */
+.note.fr { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold)), calc(100% - var(--fold)) 100%, 0 100%); }
+.note.fr::after { content: ""; right: 0;
+  background: linear-gradient(315deg, transparent 50%, color-mix(in srgb, var(--c) 70%, #3b2350) 50%, color-mix(in srgb, var(--c) 86%, #fff) 100%); }
+/* folded corner, bottom left */
+.note.fl { clip-path: polygon(0 0, 100% 0, 100% 100%, var(--fold) 100%, 0 calc(100% - var(--fold))); }
+.note.fl::after { content: ""; left: 0;
+  background: linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--c) 70%, #3b2350) 50%, color-mix(in srgb, var(--c) 86%, #fff) 100%); }
 
-/* colours + tilt, one per note */
-.note--1 { --c: #f7d774; --tilt: -1.6deg; }
-.note--2 { --c: #9fd2f2; --tilt: 1.1deg; }
-.note--3 { --c: #f4a99a; --tilt: -0.6deg; }
-.note--4 { --c: #c3c0ec; --tilt: 1.5deg; }
-.note--5 { --c: #a5dcb3; --tilt: -1.1deg; }
-.note--6 { --c: #f5b6d6; --tilt: 0.8deg; }
-.note--7 { --c: #f8c99a; --tilt: -1.4deg; }
+.note__k { font-size: 12px; line-height: 15px; font-weight: 500; color: rgb(36 36 41 / .7); letter-spacing: 0; }
+.note__t { font-size: 15px; line-height: 18px; font-weight: 600; letter-spacing: -0.012em; text-wrap: balance; }
+.note__b { font-size: 12.5px; line-height: 17px; color: rgb(36 36 41 / .8); letter-spacing: 0; }
+
+/* colours, tilt and hover, one set per note */
+.note--1 { --c: #e3d2ff; --tilt: -1.6deg; --h-rot: 0.4deg;  --h-y: -5px; }          /* violet */
+.note--2 { --c: #f9c9ec; --tilt: 1.1deg;  --h-rot: 2.2deg;  --h-y: -3px; }          /* magenta pink */
+.note--3 { --c: #ffd9b0; --tilt: -0.6deg; --h-rot: -2deg;   --h-y: -4px; }          /* Club orange */
+.note--4 { --c: #d4c4ff; --tilt: 1.5deg;  --h-rot: 0deg;    --h-y: -2px; --h-s: 1.035; }   /* deeper violet */
+.note--5 { --c: #fbd0dc; --tilt: -1.1deg; --h-rot: -2.6deg; --h-y: -5px; }          /* Club pink */
+.note--6 { --c: #ecc4f7; --tilt: 0.8deg;  --h-rot: -0.6deg; --h-y: -6px; }          /* orchid */
+.note--7 { --c: #ffe7c2; --tilt: -1.4deg; --h-rot: 0.8deg;  --h-y: -3px; --h-s: 1.03; }    /* light amber */
 
 @media (min-width: 744px) {
-  .notes { --nw: calc((100% - 2 * var(--ng)) / 3); }
-  .note { min-height: 212px; padding: 20px 18px 30px; gap: 8px; --fold: 26px; }
-  .note__k { font-size: 13px; line-height: 16px; }
-  .note__t { font-size: 19px; line-height: 23px; }
-  .note__b { font-size: 14px; line-height: 20px; }
+  .notes { --nw: min(232px, (100% - 2 * var(--ng)) / 3); }
+  .note { min-height: 0; aspect-ratio: 1 / 0.8; padding: 16px 16px 24px; gap: 6px; --fold: 22px; }
+  .note__k { font-size: 12px; line-height: 15px; }
+  .note__t { font-size: 17px; line-height: 20px; }
+  .note__b { font-size: 13px; line-height: 18px; }
 }
 @media (min-width: 1100px) {
-  .notes { --nw: calc((100% - 3 * var(--ng)) / 4); }   /* 4 + 3 */
-  .note { aspect-ratio: 1 / 0.86; min-height: 0; }
+  .notes { --nw: 236px; --ng: 28px; }   /* 4 + 3, row of four = 1028px */
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .note { transition: transform .35s cubic-bezier(.2, .7, .2, 1), filter .35s ease; }
-  .note:hover { transform: rotate(0deg) translateY(-4px);
-    filter: drop-shadow(0 2px 2px rgb(22 23 26 / .10)) drop-shadow(0 16px 24px rgb(22 23 26 / .14)); }
+  .note { transition: transform .4s cubic-bezier(.2, .7, .2, 1), filter .4s ease; }
+  .note:hover { transform: rotate(var(--h-rot)) translateY(var(--h-y)) scale(var(--h-s));
+    filter: drop-shadow(0 2px 2px rgb(36 20 60 / .10)) drop-shadow(0 16px 22px rgb(36 20 60 / .14)); }
 }
