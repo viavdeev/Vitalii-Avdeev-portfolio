@@ -125,6 +125,10 @@
 .cend .ctext__item p { font-size: 13px; line-height: 19px; letter-spacing: 0; }
 .cend .ctext__item > p { max-width: 520px; }   /* Design library paragraph: 520; learnings use the full 560 */
 .clearn { display: flex; flex-direction: column; gap: 19px; }   /* one empty line between learnings */
+/* WB Club: body text wraps like the Figma frame (greedy, see nbsp.py --loose); closing block in 15 / 24.5 with sub-headed learnings, 12 apart */
+.case--wb .cpage p { text-wrap: wrap; }
+.case--wb .cend .ctext__item p { font-size: 15px; line-height: 24.5px; letter-spacing: -0.017em; }
+.case--wb .clearn { gap: 12px; }
 
 /* outcome of the other cases, with its thank-you line */
 .coutcome__thanks { display: flex; flex-direction: column; gap: 16px; }
@@ -235,7 +239,7 @@
    (violet, magenta, the Club gradient's pink and orange). Paper = flat tint with a faint top-light and a slight tilt; the folded
    corner sits right, left or nowhere (clip-path cut + ::after flap); no shadow.
    Each note has its own hover: it straightens or tips the other way while lifting a few px (no zoom, no shadow change). */
-.cnotes { display: flex; flex-direction: column; align-items: center; gap: 16px;
+.cnotes { display: flex; flex-direction: column; align-items: center; gap: calc(28px + var(--f) * 12 / 354);   /* heading → notes 28 → 40 */
   margin-top: calc(48px + var(--f) * 12 / 354 - var(--gap)); }          /* same distance from "My role" as between text blocks */
 .cnotes > .h2 { width: min(560px, 100%); }
 .notes { --ng: calc(12px + var(--f) * 16 / 354); --nw: calc((100% - var(--ng)) / 2);

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Typographic non-breaking spaces for index.html (idempotent).
-Run after editing any visible copy:  python3 scripts/nbsp.py [page.html]  (default index.html)
+Run after editing any visible copy:  python3 scripts/nbsp.py [page.html] [--loose]  (default index.html)
+--loose (the WB Club case): body text skips rule 2, so lines wrap like the Figma frame; headings keep every rule
 Rules (body text only):
   1. articles (a, an, the) and one-character words (letters and digits) always stick to the next word
   2. function words (every word up to 3 characters: of, to, in, on, at, by, as, or, and, for, is, it, AI ... plus with, from, into,
@@ -13,7 +14,9 @@ Rules (body text only):
 import re, sys, pathlib
 NB = "&nbsp;"
 root = pathlib.Path(__file__).resolve().parent.parent
-path = root / (sys.argv[1] if len(sys.argv) > 1 else "index.html")
+_args = [a for a in sys.argv[1:] if not a.startswith("--")]
+LOOSE = "--loose" in sys.argv
+path = root / (_args[0] if _args else "index.html")
 html = path.read_text(encoding="utf-8")
 # <script> and <style> blocks are never touched: they are swapped for placeholders first (so that markup-like text
 # inside them, e.g. "<body>" in a comment, can't confuse the parser) and put back at the end.
@@ -37,6 +40,7 @@ VOID = {"br", "img", "link", "meta", "source", "input", "hr", "wbr", "track"}
 PHRASES = [
     "Vitalii Avdeev", "Mexico City (GMT-6)", "Download CV", "Core team", "Web app",
     "500K monthly", "2M daily", "Media Art", "Cross-platform,", "WB Club", "2026 Vitalii Avdeev",
+    "A/B tests", "A/B tested", "A/B cycles",
 ]
 
 def is_func(w):
@@ -48,7 +52,7 @@ def is_func(w):
         return False
     return (1 <= len(w) <= 3 and (w.isalpha() or w.isdigit())) or w.lower() in LONG_FUNC
 
-def fix(text, limit=MAX_CHAIN):
+def fix(text, limit=MAX_CHAIN, loose=False):
     t = text.replace(NB, " ")            # idempotent: start from plain spaces
     for p in PHRASES:
         t = t.replace(p, p.replace(" ", NB))
@@ -69,7 +73,7 @@ def fix(text, limit=MAX_CHAIN):
         while i < n - 1 and join[i]:
             i += 1
         return i
-    for i in range(n - 1):
+    for i in range(n - 1 if not loose else 0):
         if join[i] or not is_func(word[i]) or re.search(r"[!?;:]$|(?<!Fig)\.$", tok[i]):   # never across a sentence end
             continue
         a, b = chunk_start(i), chunk_end(i + 1)
@@ -77,8 +81,8 @@ def fix(text, limit=MAX_CHAIN):
             join[i] = True
     # 3) never leave a single word alone on the last line - unless that would weld three words into one unbreakable chunk
     #    (text-wrap: pretty covers that case)
-    if n > 2 and not join[n - 3]:
-        join[n - 2] = True
+    if n > 2 and (not join[n - 3] or (loose and len(" ".join(tok[n - 3:]).replace(NB, " ")) <= 18)):
+        join[n - 2] = True   # loose mode: a short 3-word end ("the main perks.") may weld, there is no text-wrap: pretty
     out = tok[0]
     for i in range(1, n):
         out += (NB if join[i - 1] else " ") + tok[i]
@@ -101,7 +105,8 @@ def process(body):
             if skip or not txt.strip():
                 out.append(txt); continue
             lead = re.match(r"\s*", txt).group(0); trail = re.search(r"\s*$", txt).group(0)
-            out.append(lead + fix(txt.strip(), MAX_CHAIN_LARGE if is_large(stack) else MAX_CHAIN) + trail)
+            large = is_large(stack)
+            out.append(lead + fix(txt.strip(), MAX_CHAIN_LARGE if large else MAX_CHAIN, LOOSE and not large) + trail)
             continue
         closing, tag, attrs = m.group(1), m.group(2).lower(), m.group(3)
         out.append(m.group(0))
